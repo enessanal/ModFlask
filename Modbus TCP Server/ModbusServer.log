@@ -1,0 +1,2 @@
+2019-04-10 21:59:46,632 MainThread      DEBUG    sync           :317      Started thread to serve client at ('127.0.0.1', 15267)
+2019-04-10 21:59:46,632 Thread-1        DEBUG    sync           :45       Client Connected [127.0.0.1:15267]
