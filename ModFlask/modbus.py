@@ -1,10 +1,14 @@
 import os
 import json
-
-from pyModbusTCP.client import ModbusClient
 from flask import Flask
 from flask import request
 from time import sleep
+
+
+MODBUS_LIBRARY_ID = 1
+
+if MODBUS_LIBRARY_ID == 0: from pyModbusTCP.client import ModbusClient
+if MODBUS_LIBRARY_ID == 1: from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 
 
 # Configurations BEGIN
@@ -16,9 +20,13 @@ MODBUS_SERVER = "127.0.0.1"
 MODBUS_SERVER_PORT = 502
 UNIT_IDENTIFIER = 0
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), './static')
+
 app = Flask(__name__)
 app = Flask(__name__, template_folder=ASSETS_DIR, static_folder=ASSETS_DIR)
-modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
+
+if MODBUS_LIBRARY_ID == 0: modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
+if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=502)
+if MODBUS_LIBRARY_ID == 1 : modbusClient.set_debug(True)  
 
 #############################################################
 # Configurations END
@@ -31,7 +39,8 @@ modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,aut
 
 # Function checkClientStatus BEGIN
 def checkClientStatus():
-  return modbusClient.is_open()
+  if MODBUS_LIBRARY_ID == 0: return modbusClient.is_open()
+  if MODBUS_LIBRARY_ID == 1: return modbusClient.is_socket_open()
 # Function checkClientStatus END
 
 
@@ -61,7 +70,12 @@ def clientStatusController(request_data=False):
     if checkClientStatus():
       return "Already Opened"
     else:
-      modbusClient.open()
+      if MODBUS_LIBRARY_ID == 0: 
+        if not modbusClient.open():
+          return "Connection Cannot Be Initiated"
+      if MODBUS_LIBRARY_ID == 1: 
+        if not modbusClient.connect():
+          return "Connection Cannot Be Initiated"
       return "Client Opened"
   else:
     if checkClientStatus():
@@ -111,10 +125,10 @@ def client():
 
 
 
-
+# Run App BEGIN
 if __name__ == "__main__":
 	app.run(host=HOST, port=PORT,debug=True)
-
+# Run App END
 
 
 
@@ -261,12 +275,3 @@ if __name__ == "__main__":
 
 # #############################################################
 # # Route Operations END
-
-
-
-
-
-
-
-# if __name__ == "__main__":
-# 	app.run(host=HOST, port=PORT,debug=False) 

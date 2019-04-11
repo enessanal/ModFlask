@@ -1,9 +1,16 @@
-﻿$(document).ready(function()
+﻿"use strict"
+
+
+
+
+////////////////////////////////////////////
+// $(document).ready BEGIN
+$(document).ready(function()
 {
+	setDefaultValuesforInputs()
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
-	
 
 
 
@@ -14,12 +21,11 @@
 
 
 
+
+	// Listener $("#chkbox_ClientStatus").change BEGIN
 	$("#chkbox_ClientStatus").change(function(event)
 	{
 		let open_client=$(this).is(":checked")
-		// $(this).attr("disabled", true);
-		// $(this).addClass("disabled")
-		
 	
 		$.ajax(
 		{
@@ -36,12 +42,32 @@
 				console.log(error)
 			},
 		});
-
-
 	});
+	// Listener $("#chkbox_ClientStatus").change END
+
+
+	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
+	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
+	{
+		if(!(event.which >=48 && event.which<=57))
+		{
+			event.preventDefault();
+		}
+	});
+	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
+
+
+
 });
+// $(document).ready END
+////////////////////////////////////////////
 
 
+
+////////////////////////////////////////////
+// HelperFunctions BEGIN
+
+// Function checkClientStatus BEGIN
 function checkClientStatus()
 {
 	$.ajax(
@@ -59,7 +85,27 @@ function checkClientStatus()
 			},
 		});
 }
+// Function checkClientStatus END
 
+
+
+
+// Function setDefaultValuesforInputs BEGIN
+function setDefaultValuesforInputs()
+{
+	$("#txt_IPOctet1").val("127");
+	$("#txt_IPOctet2").val("0");
+	$("#txt_IPOctet3").val("0");
+	$("#txt_IPOctet4").val("1");
+	$("#txt_portNumber").val("502");
+}
+// Function setDefaultValuesforInputs END
+
+
+
+
+// HelperFunctions END
+////////////////////////////////////////////
 
 
 
