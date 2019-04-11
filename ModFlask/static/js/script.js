@@ -5,7 +5,7 @@
 // $(document).ready BEGIN
 $(document).ready(function()
 {
-	setDefaultValuesforInputs()
+	setDefaultValuesforInputs();
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
@@ -37,7 +37,19 @@ $(document).ready(function()
 			contentType: 'application/json',
 			success: function(response) 
 			{
-				console.log(response)
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]
+					console.log("%s:%d => %s",ip_address,port_number,message)
+				} 
+				catch (exception) 
+				{
+					console.log("Can't parse JSON. Original response => "+response)
+					console.log("Error Message => "+exception.message)
+				}
 			},
 			error: function(error) 
 			{
@@ -58,6 +70,7 @@ $(document).ready(function()
 		}
 	});
 
+
 	$(".txt_portNumber").focusout(function(event) 
 	{
 		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
@@ -68,8 +81,18 @@ $(document).ready(function()
 	});
 
 
+$(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
+{
+	if(event.which >=48 && event.which<=57)
+	{
+		if($(this).attr('id')=="txt_IPOctet1" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet2").val(""); $("#txt_IPOctet2").focus(); }
+		if($(this).attr('id')=="txt_IPOctet2" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet3").val(""); $("#txt_IPOctet3").focus(); }
+		if($(this).attr('id')=="txt_IPOctet3" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet4").val(""); $("#txt_IPOctet4").focus();}
+		if($(this).attr('id')=="txt_IPOctet4" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_portNumber").focus();}
+		if($(this).attr('id')=="txt_portNumber" && $(this).val().length > 1 && parseInt($(this).val()) > 9000 ) $(this).blur();
+	}
 
-
+});
 
 
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
@@ -102,8 +125,38 @@ function checkClientStatus()
 			type: "GET",
 			success: function(response) 
 			{
-				if(JSON.parse(response) && ! $("#chkbox_ClientStatus").is(":checked")) $('#chkbox_ClientStatus').bootstrapToggle("on")
-				if(!JSON.parse(response)&& $("#chkbox_ClientStatus").is(":checked")) $('#chkbox_ClientStatus').bootstrapToggle("off")
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]==	"true"?true:false
+					
+
+					if(message && ! $("#chkbox_ClientStatus").is(":checked"))
+					{ 
+						console.log("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						$('#chkbox_ClientStatus').bootstrapToggle("on")
+						
+						
+						$("#txt_IPOctet1").val(ip_address.split(".")[0]);
+						$("#txt_IPOctet2").val(ip_address.split(".")[1]);
+						$("#txt_IPOctet3").val(ip_address.split(".")[2]);
+						$("#txt_IPOctet4").val(ip_address.split(".")[3]);
+						$("#txt_portNumber").val(port_number);
+					}
+					if(! message && $("#chkbox_ClientStatus").is(":checked")) 
+					{
+						$('#chkbox_ClientStatus').bootstrapToggle("on")
+						console.log("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						$('#chkbox_ClientStatus').bootstrapToggle("off")
+					}
+				} 
+				catch (exception) 
+				{
+					console.log("Can't parse JSON. Original response => "+response)
+					console.log("Error Message => "+exception.message)
+				}
 			},
 			error: function(error) 
 			{

@@ -6,16 +6,12 @@ from flask import request
 from time import sleep
 
 
-MODBUS_LIBRARY_ID = 1
-
-if MODBUS_LIBRARY_ID == 0: from pyModbusTCP.client import ModbusClient
-if MODBUS_LIBRARY_ID == 1: from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-
-
 # Configurations BEGIN
 #############################################################
-HOST = "127.0.0.1"
-PORT = 8001
+MODBUS_LIBRARY_ID = 0
+
+WEB_CLIENT_HOST = "127.0.0.1"
+WEB_CLIENT_PORT = 8001
 
 MODBUS_SERVER= "127.0.0.1"
 MODBUS_SERVER_PORT = 502
@@ -25,11 +21,16 @@ ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), './static'
 app = Flask(__name__)
 app = Flask(__name__, template_folder=ASSETS_DIR, static_folder=ASSETS_DIR)
 
+if MODBUS_LIBRARY_ID == 0: from pyModbusTCP.client import ModbusClient
+if MODBUS_LIBRARY_ID == 1: from pymodbus.client.sync import ModbusTcpClient as ModbusClient
+
 if MODBUS_LIBRARY_ID == 0: modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
 if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=MODBUS_SERVER_PORT)
 
 #############################################################
 # Configurations END
+
+
 
 
 # HelperFunctions BEGIN
@@ -40,10 +41,6 @@ def checkClientStatus():
   if MODBUS_LIBRARY_ID == 0: return modbusClient.is_open()
   if MODBUS_LIBRARY_ID == 1: return modbusClient.is_socket_open()
 # Function checkClientStatus END
-
-
-
-
 
 #############################################################
 # HelperFunctions END
@@ -70,30 +67,35 @@ def clientStatusController(request_data=False):
   open_client = json.loads(request_data)["open_client"]
 
   if(open_client and checkClientStatus()):
-    return "Already Opened"
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Already Opened"}
+    return json.dumps(responseObject)
 
   if(not open_client and not checkClientStatus()):
-    return "Already Closed"
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Already Closed"}
+    return json.dumps(responseObject)
 
   if(not open_client and checkClientStatus()):
     modbusClient.close()
-    return "Client Closed"
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Client Closed"}
+    return json.dumps(responseObject)
   
   if(open_client and not checkClientStatus()):
     ip_address = json.loads(request_data)["ip_address"]
     port = json.loads(request_data)["port"]
-    print("------------------------------------")
 
-    print(ip_address)
     if re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",ip_address) is None:
       return "Bad IP Address Format"
-   
-    print("------------------------------------")
+
+    if not str.isdigit(str(port)): return "Bad Port Format"
+    if int(port) < 0 or int(port) > 65535: return "Bad Port"
     
     if(ip_address==MODBUS_SERVER and port==MODBUS_SERVER_PORT):
+
       if MODBUS_LIBRARY_ID == 0: 
-        if not modbusClient.open(): return "Connection Cannot Be Initiated"
-        return "Client Opened"
+        responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Client Opened"}
+        if not modbusClient.open(): responseObject["message"]="Connection Cannot Be Initiated"
+        return json.dumps(responseObject)
+
       if MODBUS_LIBRARY_ID == 1:
         if not modbusClient.connect(): return "Connection Cannot Be Initiated"
         return "Client Opened"
@@ -103,14 +105,16 @@ def clientStatusController(request_data=False):
       MODBUS_SERVER_PORT = port
 
       if MODBUS_LIBRARY_ID == 0: modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
-      if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=MODBUS_SERVER_PORT)
+      if MODBUS_LIBRARY_ID == 1: modbusClient = ModbusClient(MODBUS_SERVER, port=MODBUS_SERVER_PORT)
       if MODBUS_LIBRARY_ID == 0: 
         if not modbusClient.open(): return "Connection Cannot Be Initiated"
-        return "Client Opened"
+        responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Client Opened"}
+        return json.dumps(responseObject)
       if MODBUS_LIBRARY_ID == 1:
         if not modbusClient.connect(): return "Connection Cannot Be Initiated"
         return "Client Opened"
       return "Unpredictable Situation"
+      
       
 #############################################################
 # Controllers END
@@ -139,7 +143,8 @@ def client():
   if request.method	== "POST":
     return clientStatusController(request.data)
   else:
-    return clientStatusController()
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":clientStatusController()}
+    return json.dumps(responseObject)
 # Route clientStatus END
 
 
@@ -154,27 +159,13 @@ def client():
 
 
 
+
+
+
 # Run App BEGIN
 if __name__ == "__main__":
-	app.run(host=HOST, port=PORT,debug=True)
+	app.run(host=WEB_CLIENT_HOST, port=WEB_CLIENT_PORT,debug=True)
 # Run App END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -296,11 +287,17 @@ if __name__ == "__main__":
 # def writeCoils(): return writeCoilsFunc()
 # # Route /api/writeCoils END
 
-# # Route /
-# @app.route("/",methods=["GET"])
-# def home():	return homeFunc()
-# # Route / END
 
 
-# #############################################################
-# # Route Operations END
+
+# <pyModbusTCP.client.ModbusClient object at 0x0347E0D0>
+# ['_ModbusClient__auto_close', '_ModbusClient__auto_open', '_ModbusClient__debug', '_ModbusClient__debug_msg', 
+# '_ModbusClient__hd_tr_id', '_ModbusClient__hostname', '_ModbusClient__last_error', '_ModbusClient__last_except', 
+# '_ModbusClient__mode', '_ModbusClient__port', '_ModbusClient__sock', '_ModbusClient__timeout', '_ModbusClient__unit_id', 
+# '_ModbusClient__version', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', 
+# '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__',
+#  '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_add_crc', '_can_read', '_crc_is_ok', 
+#  '_mbus_frame', '_pretty_dump', '_recv', '_recv_all', '_recv_mbus', '_send', '_send_mbus', 'auto_close', 'auto_open', 'close', 'debug', 'host', 
+#  'is_open', 'last_error', 'last_except', 'mode', 'open', 'port', 'read_coils', 'read_discrete_inputs', 'read_holding_registers', 'read_input_registers', 
+#  'timeout', 'unit_id', 'version', 'write_multiple_coils', 'write_multiple_registers', 'write_single_coil', 'write_single_register']
+
