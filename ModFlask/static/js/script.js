@@ -1,8 +1,6 @@
 ﻿"use strict"
 
 
-
-
 ////////////////////////////////////////////
 // $(document).ready BEGIN
 $(document).ready(function()
@@ -14,24 +12,28 @@ $(document).ready(function()
 
 
 
-
-
-
-
-
-
-
-
 	// Listener $("#chkbox_ClientStatus").change BEGIN
 	$("#chkbox_ClientStatus").change(function(event)
 	{
 		let open_client=$(this).is(":checked")
-	
+
+		if(open_client)
+		{
+			$(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
+		}
+		else
+		{
+			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
+		}
+
+		let ip_address=$("#txt_IPOctet1").val()+"."+$("#txt_IPOctet2").val()+"."+$("#txt_IPOctet3").val()+"."+$("#txt_IPOctet4").val();
+		let port=parseInt($("#txt_portNumber").val())
+		
 		$.ajax(
 		{
 			url: "/api/clientstatus",
 			type: "POST",
-			data: JSON.stringify(open_client),
+			data: JSON.stringify({open_client,ip_address,port}),
 			contentType: 'application/json',
 			success: function(response) 
 			{
@@ -44,6 +46,30 @@ $(document).ready(function()
 		});
 	});
 	// Listener $("#chkbox_ClientStatus").change END
+
+
+
+	$(".txt_ipOctet").focusout(function(event) 
+	{
+		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
+		if(parseInt($(this).val()) > 255 || parseInt($(this).val()) < 0 )
+		{
+			$(this).val(0);
+		}
+	});
+
+	$(".txt_portNumber").focusout(function(event) 
+	{
+		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
+		if(parseInt($(this).val()) > 65535 || parseInt($(this).val()) < 0 )
+		{
+			$(this).val(502);
+		}
+	});
+
+
+
+
 
 
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN

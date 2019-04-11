@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from flask import Flask
 from flask import request
 from time import sleep
@@ -16,7 +17,7 @@ if MODBUS_LIBRARY_ID == 1: from pymodbus.client.sync import ModbusTcpClient as M
 HOST = "127.0.0.1"
 PORT = 8001
 
-MODBUS_SERVER = "127.0.0.1"
+MODBUS_SERVER= "127.0.0.1"
 MODBUS_SERVER_PORT = 502
 UNIT_IDENTIFIER = 0
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), './static')
@@ -25,13 +26,10 @@ app = Flask(__name__)
 app = Flask(__name__, template_folder=ASSETS_DIR, static_folder=ASSETS_DIR)
 
 if MODBUS_LIBRARY_ID == 0: modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
-if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=502)
-if MODBUS_LIBRARY_ID == 1 : modbusClient.set_debug(True)  
+if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=MODBUS_SERVER_PORT)
 
 #############################################################
 # Configurations END
-
-
 
 
 # HelperFunctions BEGIN
@@ -62,27 +60,58 @@ def homeController():
 
 def clientStatusController(request_data=False):
   # sleep(1)
+  global MODBUS_SERVER
+  global MODBUS_SERVER_PORT
+  global modbusClient
+
   if not request_data:
     return json.dumps(checkClientStatus())
 
+  open_client = json.loads(request_data)["open_client"]
 
-  if json.loads(request_data):
-    if checkClientStatus():
-      return "Already Opened"
-    else:
+  if(open_client and checkClientStatus()):
+    return "Already Opened"
+
+  if(not open_client and not checkClientStatus()):
+    return "Already Closed"
+
+  if(not open_client and checkClientStatus()):
+    modbusClient.close()
+    return "Client Closed"
+  
+  if(open_client and not checkClientStatus()):
+    ip_address = json.loads(request_data)["ip_address"]
+    port = json.loads(request_data)["port"]
+    print("------------------------------------")
+
+    print(ip_address)
+    if re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",ip_address) is None:
+      return "Bad IP Address Format"
+   
+    print("------------------------------------")
+    
+    if(ip_address==MODBUS_SERVER and port==MODBUS_SERVER_PORT):
       if MODBUS_LIBRARY_ID == 0: 
-        if not modbusClient.open():
-          return "Connection Cannot Be Initiated"
-      if MODBUS_LIBRARY_ID == 1: 
-        if not modbusClient.connect():
-          return "Connection Cannot Be Initiated"
-      return "Client Opened"
-  else:
-    if checkClientStatus():
-      modbusClient.close()
-      return "Client Closed"
-    else:
-      return "Already Closed"
+        if not modbusClient.open(): return "Connection Cannot Be Initiated"
+        return "Client Opened"
+      if MODBUS_LIBRARY_ID == 1:
+        if not modbusClient.connect(): return "Connection Cannot Be Initiated"
+        return "Client Opened"
+    
+    if(ip_address!=MODBUS_SERVER or port!=MODBUS_SERVER_PORT):
+      MODBUS_SERVER = ip_address
+      MODBUS_SERVER_PORT = port
+
+      if MODBUS_LIBRARY_ID == 0: modbusClient = ModbusClient(MODBUS_SERVER,MODBUS_SERVER_PORT,UNIT_IDENTIFIER,auto_open=None)
+      if MODBUS_LIBRARY_ID == 1:  modbusClient = ModbusClient(MODBUS_SERVER, port=MODBUS_SERVER_PORT)
+      if MODBUS_LIBRARY_ID == 0: 
+        if not modbusClient.open(): return "Connection Cannot Be Initiated"
+        return "Client Opened"
+      if MODBUS_LIBRARY_ID == 1:
+        if not modbusClient.connect(): return "Connection Cannot Be Initiated"
+        return "Client Opened"
+      return "Unpredictable Situation"
+      
 #############################################################
 # Controllers END
 
