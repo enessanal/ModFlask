@@ -9,6 +9,54 @@ $(document).ready(function()
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
+	$("#btn_coilSet").click(function(event)
+	{
+		let coilAddress=parseInt($("#txt_coilAddress").val())
+		let bit=1
+
+		$.ajax(
+			{
+				url:"/api/writeSingleCoil",
+				data: JSON.stringify({coilAddress,bit}),
+				contentType: 'application/json',
+				type: "POST",
+				success: function(response) 
+				{
+					print(response)
+				},
+				error: function(error) 
+				{
+					print(error)
+				},
+			});
+	});
+
+
+	$("#btn_coilReset").click(function(event)
+	{
+		let coilAddress=parseInt($("#txt_coilAddress").val())
+		let bit=0
+
+		$.ajax(
+			{
+				url:"/api/writeSingleCoil",
+				data: JSON.stringify({coilAddress,bit}),
+				contentType: 'application/json',
+				type: "POST",
+				success: function(response) 
+				{
+					print(response)
+				},
+				error: function(error) 
+				{
+					print(error)
+				},
+			});
+	});
+
+
+
+
 
 
 
@@ -17,14 +65,9 @@ $(document).ready(function()
 	{
 		let open_client=$(this).is(":checked")
 
-		if(open_client)
-		{
-			$(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
-		}
-		else
-		{
-			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
-		}
+		if (open_client) $(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
+		else $(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
+	
 
 		let ip_address=$("#txt_IPOctet1").val()+"."+$("#txt_IPOctet2").val()+"."+$("#txt_IPOctet3").val()+"."+$("#txt_IPOctet4").val();
 		let port=parseInt($("#txt_portNumber").val())
@@ -43,24 +86,28 @@ $(document).ready(function()
 					let ip_address=responseObject["host"]
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
-					console.log("%s:%d => %s",ip_address,port_number,message)
+					print("%s:%d => %s",ip_address,port_number,message)
+					
+					if(message=="Client Opened" || message=="Already Opened" ) $("#div_Operations").show()
+					if(message=="Client Closed" || message=="Already Closed") $("#div_Operations").hide()
+
 				} 
 				catch (exception) 
 				{
-					console.log("Can't parse JSON. Original response => "+response)
-					console.log("Error Message => "+exception.message)
+					print("Can't parse JSON. Original response => "+response)
+					print("Error Message => "+exception.message)
 				}
 			},
 			error: function(error) 
 			{
-				console.log(error)
+				print(error)
 			},
 		});
 	});
 	// Listener $("#chkbox_ClientStatus").change END
 
 
-
+	// Listener $(".txt_ipOctet").focusout BEGIN
 	$(".txt_ipOctet").focusout(function(event) 
 	{
 		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
@@ -69,8 +116,10 @@ $(document).ready(function()
 			$(this).val(0);
 		}
 	});
+	// Listener $(".txt_ipOctet").focusout END
 
 
+	// Listener $(".txt_portNumber").focusout BEGIN
 	$(".txt_portNumber").focusout(function(event) 
 	{
 		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
@@ -78,7 +127,8 @@ $(document).ready(function()
 		{
 			$(this).val(502);
 		}
-	});
+	});	
+	// Listener $(".txt_portNumber").focusout END
 
 
 $(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
@@ -135,7 +185,7 @@ function checkClientStatus()
 
 					if(message && ! $("#chkbox_ClientStatus").is(":checked"))
 					{ 
-						console.log("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						print("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
 						$('#chkbox_ClientStatus').bootstrapToggle("on")
 						
 						
@@ -148,19 +198,19 @@ function checkClientStatus()
 					if(! message && $("#chkbox_ClientStatus").is(":checked")) 
 					{
 						$('#chkbox_ClientStatus').bootstrapToggle("on")
-						console.log("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						print("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
 						$('#chkbox_ClientStatus').bootstrapToggle("off")
 					}
 				} 
 				catch (exception) 
 				{
-					console.log("Can't parse JSON. Original response => "+response)
-					console.log("Error Message => "+exception.message)
+					print("Can't parse JSON. Original response => "+response)
+					print("Error Message => "+exception.message)
 				}
 			},
 			error: function(error) 
 			{
-				console.log(error)
+				print(error)
 			},
 		});
 }
@@ -172,6 +222,7 @@ function checkClientStatus()
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_coilAddress").val("0");
 	$("#txt_IPOctet1").val("127");
 	$("#txt_IPOctet2").val("0");
 	$("#txt_IPOctet3").val("0");
@@ -181,6 +232,12 @@ function setDefaultValuesforInputs()
 // Function setDefaultValuesforInputs END
 
 
+// Function print BEGIN
+function print(...strings)
+{
+  console.log(...strings);
+}
+// Function print END
 
 
 // HelperFunctions END
@@ -217,7 +274,7 @@ function setDefaultValuesforInputs()
 // 			},
 // 			error: function(error) 
 // 			{
-// 				console.log(error)
+// 				print(error)
 // 				$("#readHRegisterResult").show();
 // 				$("#btnReadHRegister").attr("disabled", false);
 // 				$("#readHRegisterResult").html(JSON.stringify(error));
@@ -254,7 +311,7 @@ function setDefaultValuesforInputs()
 // 			},
 // 			error: function(error) 
 // 			{
-// 				console.log(error)
+// 				print(error)
 // 				$("#readInputResult").show();
 // 				$("#btnReadInput").attr("disabled", false);
 // 				$("#readInputResult").html(JSON.stringify(error));
@@ -290,7 +347,7 @@ function setDefaultValuesforInputs()
 // 			},
 // 			error: function(error) 
 // 			{
-// 				console.log(error)
+// 				print(error)
 // 				$("#readCoilsResult").show();
 // 				$("#btnReadCoils").attr("disabled", false);
 // 				$("#readCoilsResult").html(JSON.stringify(error));
