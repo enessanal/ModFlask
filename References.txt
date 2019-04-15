@@ -1,0 +1,12 @@
+https://pymodbus.readthedocs.io/en/latest/
+https://pymodbustcp.readthedocs.io/en/latest/
+
+[BOOK] Flask Web Development: Developing Web Applications with Python
+http://flask.pocoo.org/
+https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+https://www.w3schools.com/bootstrap/default.asp
+
+https://pinout.xyz/
+https://www.electronicoscaldas.com/datasheet/MG996R_Tower-Pro.pdf
+
+https://tutorials-raspberrypi.com/raspberry-pi-servo-motor-control/
