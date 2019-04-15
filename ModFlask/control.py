@@ -10,6 +10,7 @@ def homeController():
   return app.send_static_file("index.html")
 # homeController END
 
+
 # clientStatusController BEGIN
 def clientStatusController(request_data=False):
   # time.sleep(1)
@@ -88,6 +89,7 @@ def clientStatusController(request_data=False):
       return "Unpredictable Situation"
 # clientStatusController END  
 
+
 # writeSingleCoilController BEGIN
 def writeSingleCoilController(request_data=False):
   if not modbusClient.is_open():
@@ -131,16 +133,7 @@ def writeMultipleCoilsController(request_data=False):
 
   if not rq : return "fail"
   return "successfull"
-# writeSingleCo
-
-
-
-
-
-
-
-
-
+# writeSingleCoilController END
 
 
 #############################################################
