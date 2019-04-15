@@ -5,7 +5,7 @@ from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 from pymodbus.transaction import ModbusRtuFramer, ModbusBinaryFramer
 import logging
 
-HOST="localhost"
+HOST="0.0.0.0"
 PORT=502
 
 # Log Configuration
