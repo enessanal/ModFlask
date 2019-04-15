@@ -9,6 +9,35 @@ $(document).ready(function()
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
+
+	$("#btn_sendCoils").click(function(event)
+	{
+		let coilStartAddress =	parseInt($("#txt_coilStartAddress").val());
+		let quantityCoils =	parseInt($("#txt_quantityCoils").val());
+		let coilsArray=[];
+		$("#txt_coilsArray").val().split("").forEach(char => {coilsArray.push(parseInt(char));});
+
+		$.ajax(
+			{
+				url:"/api/writeMultipleCoils",
+				type:"POST",
+				contentType:"application/json",
+				data:JSON.stringify({coilStartAddress,quantityCoils,coilsArray}),
+				success: function(response)
+				{
+					print(response)
+				},
+				error: function(error)
+				{
+					print(error.message)
+				}
+		});
+	});
+
+
+
+
+
 	$("#btn_coilSet").click(function(event)
 	{
 		let coilAddress=parseInt($("#txt_coilAddress").val())
@@ -53,7 +82,39 @@ $(document).ready(function()
 				},
 			});
 	});
+	
+	
+	$("#txt_quantityCoils").focusout(function(event) 
+	{
+		$("#txt_coilsArray").attr("maxlength",$(this).val());
+		$("#txt_coilsArray").val("0".repeat($(this).val()))
+	});	
 
+	$("#txt_quantityCoils").keypress(function(event) 
+	{
+		if(!(event.which >=48 && event.which<=57))
+		{
+			event.preventDefault();
+		}
+	});		
+
+
+	$("#txt_coilsArray").keypress(function(event) 
+	{
+		if(event.which != 48 && event.which != 49)
+		{
+			event.preventDefault();
+		}
+	});	
+
+
+	$("#txt_coilStartAddress").keypress(function(event) 
+	{
+		if(event.which != 48 && event.which != 49)
+		{
+			event.preventDefault();
+		}
+	});	
 
 
 
@@ -88,8 +149,10 @@ $(document).ready(function()
 					let message=responseObject["message"]
 					print("%s:%d => %s",ip_address,port_number,message)
 					
-					if(message=="Client Opened" || message=="Already Opened" ) $("#div_Operations").show()
-					if(message=="Client Closed" || message=="Already Closed") $("#div_Operations").hide()
+					if(message=="Client Opened" || message=="Already Opened" ) $("#div_Operations").fadeIn()
+					if(message=="Client Closed" || message=="Already Closed") $("#div_Operations").fadeOut()
+					// if(message=="Client Opened" || message=="Already Opened" ) $("#div_Operations").slideDown()
+					// if(message=="Client Closed" || message=="Already Closed") $("#div_Operations").slideUp()
 
 				} 
 				catch (exception) 
@@ -218,10 +281,14 @@ function checkClientStatus()
 
 
 
-
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_coilsArray").val("1111100000");
+	$("#txt_quantityCoils").val("10");
+	$("#txt_coilsArray").attr("maxlength",$("#txt_quantityCoils").val());
+
+	$("#txt_coilStartAddress").val("0");
 	$("#txt_coilAddress").val("0");
 	$("#txt_IPOctet1").val("127");
 	$("#txt_IPOctet2").val("0");
@@ -233,7 +300,7 @@ function setDefaultValuesforInputs()
 
 
 // Function print BEGIN
-function print(...strings)
+function print(...strings)	
 {
   console.log(...strings);
 }
@@ -242,144 +309,3 @@ function print(...strings)
 
 // HelperFunctions END
 ////////////////////////////////////////////
-
-
-
-
-
-
-// $(document).ready(function()
-// {
-// 	$( "#readHRegisterForm" ).submit(function( event ) 
-// 	{
-// 		$("#btnReadHRegister").attr("disabled", true);
-// 		$.ajax(
-// 		{
-// 			data:JSON.stringify({inputAddress:$("#hregisterAddress").val(),inputQuantity:$("#hregisterQuantity").val()}),
-// 			url: '/api/readHRegisters',
-// 			type: 'POST',
-// 			contentType: 'application/json',
-// 			dataType: "json",
-// 			success: function(response) 
-// 			{
-// 				$("#readHRegisterResult").show();
-// 				$("#btnReadHRegister").attr("disabled", false);
-// 				if(response.bits)
-// 				{
-// 					$("#readHRegisterResult").html(response.text+"<br>"+response.bits);
-// 				}
-// 				else
-// 				$("#readHRegisterResult").html("Unknown Error");
-				
-// 			},
-// 			error: function(error) 
-// 			{
-// 				print(error)
-// 				$("#readHRegisterResult").show();
-// 				$("#btnReadHRegister").attr("disabled", false);
-// 				$("#readHRegisterResult").html(JSON.stringify(error));
-// 			}
-// 		});
-// 		event.preventDefault();
-// 	});
-
-
-
-
-// 	$( "#readInputsForm" ).submit(function( event ) 
-// 	{
-// 		$("#btnReadInput").attr("disabled", true);
-// 		$.ajax(
-// 		{
-// 			data:JSON.stringify({inputAddress:$("#inputAddress").val(),inputQuantity:$("#inputQuantity").val()}),
-// 			url: '/api/readInputs',
-// 			type: 'POST',
-// 			contentType: 'application/json',
-// 			dataType: "json",
-// 			success: function(response) 
-// 			{
-// 				$("#readInputResult").show();
-// 				$("#btnReadInput").attr("disabled", false);
-// 				if(response.bits)
-// 				{
-// 					bits=response.bits.map(function(bit){if(bit) return 1; else return 0;});
-// 					$("#readInputResult").html(response.text+"<br>"+bits);
-// 				}
-// 				else
-// 				$("#readInputResult").html("Unknown Error");
-				
-// 			},
-// 			error: function(error) 
-// 			{
-// 				print(error)
-// 				$("#readInputResult").show();
-// 				$("#btnReadInput").attr("disabled", false);
-// 				$("#readInputResult").html(JSON.stringify(error));
-// 			}
-// 		});
-// 		event.preventDefault();
-// 	});
-
-
-
-// 	$( "#readCoilsForm" ).submit(function( event ) 
-// 	{
-// 		$("#btnReadCoils").attr("disabled", true);
-// 		$.ajax(
-// 		{
-// 			data:JSON.stringify({coilAddress:$("#coilAddress").val(),coilQuantity:$("#quantity").val()}),
-// 			url: '/api/readCoils',
-// 			type: 'POST',
-// 			contentType: 'application/json',
-// 			dataType: "json",
-// 			success: function(response) 
-// 			{
-// 				$("#readCoilsResult").show();
-// 				$("#btnReadCoils").attr("disabled", false);
-// 				if(response.bits)
-// 				{
-// 					bits=response.bits.map(function(bit){if(bit) return 1; else return 0;});
-// 					$("#readCoilsResult").html(response.text+"<br>"+bits);
-// 				}
-// 				else
-// 				$("#readCoilsResult").html("Unknown Error");
-				
-// 			},
-// 			error: function(error) 
-// 			{
-// 				print(error)
-// 				$("#readCoilsResult").show();
-// 				$("#btnReadCoils").attr("disabled", false);
-// 				$("#readCoilsResult").html(JSON.stringify(error));
-// 			}
-// 		});
-// 		event.preventDefault();
-// 	});
-
-
-
-// 	$( "#writeToCoilsForm" ).submit(function( event ) 
-// 	{
-// 		$("#btnWriteCoils").attr("disabled", true);
-// 		$.ajax(
-// 		{
-// 			url: '/api/writeCoils',
-// 			type: 'POST',
-// 			success: function(response) 
-// 			{
-// 				$("#writeToCoilsResult").show();
-// 				$("#writeToCoilsResult").html(response);
-// 				$("#btnWriteCoils").attr("disabled", false);
-				
-// 			},
-// 			error: function(error) 
-// 			{
-// 				$("#writeToCoilsResult").show();
-// 				$("#btnWriteCoils").attr("disabled", false);
-// 				$("#writeToCoilsResult").html(error);
-// 			}
-// 		});
-// 		event.preventDefault();
-// 	});
-// });
-

@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>ModFlask - Flask Web Client for Modbus</title>
+    <link rel="icon" data-emoji="🛰" type="image/png">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
 
@@ -55,8 +57,8 @@
     <div class="row well" id="div_Operations" hidden>
       <div class="row" style="padding:0px">
         <h3 style="margin-top:0px"><b>Operations</b></h3>
-        
       </div>
+
       <div class="row well" style="padding-top:8px; padding-left:5px">
         <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Single Coil (Discrete Outputs)</b></h4>
         <label style="font-size:medium; margin-right: 32px"><b>Coil Address</b></label>
@@ -65,6 +67,36 @@
         <button id="btn_coilSet" type="button" class="btn btn-success">1</button>
         <button id="btn_coilReset" type="button" class="btn btn-danger">0</button>
       </div>
+
+      <div class="row well" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Multiple Coils (Discrete Outputs)</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Coil Start Address</b></label>
+        <input id="txt_coilStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Coils</b></label>
+        <input id="txt_quantityCoils" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 64px"><b>Bits Array</b></label>
+        <input id="txt_coilsArray" class="input-sm" style="width:50%; font-weight:bold; font-size:medium;">
+        <br>
+        <button id="btn_sendCoils" type="button" class="btn btn-success">Send</button>
+      </div>
+
+
+      <div class="row well" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Real Coils (Discrete Outputs)</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Coil Start Address</b></label>
+        <input id="txt_readCoilStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Coils</b></label>
+        <input id="txt_readQuantityCoils" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <button id="btn_receiveCoils" type="button" class="btn btn-success">Receive</button>
+      </div>
+
+
+
+
     </div>
     <!-- Operations Row END -->
 
@@ -73,105 +105,3 @@
   </div>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
- <head>
-  <title>MODBUS CLIENT</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="./static/css/bootstrap.min.css">
-  <script src="./static/js/jquery.min.js"></script>
-  <script src="./static/js/bootstrap.min.js"></script>
-  <script src="./static/js/script.js"></script>
- </head>
- <body>
-
-   <h3>Read Coils</h3>
-   <form class="form-horizontal" id="readCoilsForm">
-    <label>Coil Address</label>
-    <input type="number" id="coilAddress" required >
-    <br>
-    <label>Quantity</label>
-    <input type="number" id="quantity" required >
-    <br>
-    <button type="submit" class="btn btn-default" id="btnReadCoils">Read</button>
-   </form>
-   <p id="readCoilsResult" hidden></p>
-
-
-
-   <hr>
-
-
-   <h3>Read Discrite Inputs</h3>
-   <form class="form-horizontal" id="readInputsForm">
-    <label>Input Address</label>
-    <input type="number" id="inputAddress" required >
-    <br>
-    <label>Quantity</label>
-    <input type="number" id="inputQuantity" required >
-    <br>
-    <button type="submit" class="btn btn-default" id="btnReadInput">Read</button>
-   </form>
-   <p id="readInputResult" hidden></p>
-
-   <hr>
-
-
-   <h3>Read Holding Registers</h3>
-   <form class="form-horizontal" id="readHRegisterForm">
-    <label>Register Address</label>
-    <input type="number" id="hregisterAddress" required >
-    <br>
-    <label>Quantity</label>
-    <input type="number" id="hregisterQuantity" required >
-    <br>
-    <button type="submit" class="btn btn-default" id="btnReadHRegister">Read</button>
-   </form>
-   <p id="readHRegisterResult" hidden></p>
-   
-
-
-
-
-
-  <hr>
-  
-  
-  <h3>Write Coils</h3>
-  <form class="form-horizontal" id="writeToCoilsForm" >
-   <button type="submit" class="btn btn-default" id="btnWriteCoils">Send</button>
-  </form>
-  <p id="writeToCoilsResult" hidden></p>
- 
-
- 
-
- </body>
-</html> -->
