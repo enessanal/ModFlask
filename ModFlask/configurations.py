@@ -1,3 +1,22 @@
+import sys
+import importlib
+
+if sys.version_info.major is not 3:
+ print("! Only Python3 !")
+ exit()
+
+moduleNames=[]
+moduleNames.append("flask")
+moduleNames.append("pymodbus")
+moduleNames.append("pyModbusTCP")
+
+for moduleName in moduleNames:
+ if(importlib.util.find_spec(moduleName) is None):
+  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+  print('pip3 install {}'.format(moduleName))
+  exit()
+
+
 import os 
 import time
 import json
