@@ -142,12 +142,6 @@ def writeMultipleCoilsController(request_data=False):
 
 
 
-
-
-
-
-
-
 # Route Operations BEGIN
 #############################################################
 
@@ -180,13 +174,6 @@ def writeSingleCoilRoute():
 def writeMultipleCoilsRoute():
   return writeMultipleCoilsController(request.data)
 # writeSingleCoilRoute END
-
-
-
-
-
-
-
 
 
 #############################################################
