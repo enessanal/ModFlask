@@ -1,6 +1,5 @@
 from helpers import *
 
-
 # Controllers BEGIN
 #############################################################
 
@@ -98,47 +97,62 @@ def clientStatusController(request_data=False):
 # writeSingleCoilController BEGIN
 def writeSingleCoilController(request_data=False):
   if not modbusClient.is_open():
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Client must be opened."}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Coil Write: Client must be opened."}
+    return json.dumps(responseObject)
 
-  responseObject={}
+  requestObject={}
   try:
-    responseObject = json.loads(request_data)
-    if responseObject["coilAddress"] < 0 or (responseObject["bit"]!=0 and responseObject["bit"]!=1 ):
-      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Bad Parameter"}
+    requestObject = json.loads(request_data)
+    if requestObject["coilAddress"] < 0 or (requestObject["bit"]!=0 and requestObject["bit"]!=1 ):
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Coil Write: Bad Parameter"}
       return json.dumps(responseObject)
 
   except Exception as exception:
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Bad Parameter"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Coil Write: Bad Parameter"}
     return json.dumps(responseObject)
 
-  rq = modbusClient.write_single_coil(responseObject["coilAddress"],responseObject["bit"])
-  if not rq : return "fail"
-  return "successfull"
+  modbusRequest = modbusClient.write_single_coil(requestObject["coilAddress"],requestObject["bit"])
+
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Coil Write: Fail"}
+    return json.dumps(responseObject)
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Coil Write: Successfull"}
+  return json.dumps(responseObject)
 # writeSingleCoilController END
 
 
-# writeSingleCoilController BEGIN
+# writeMultipleCoilsController BEGIN
 def writeMultipleCoilsController(request_data=False):
   if not modbusClient.is_open():
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Client must be opened."}
-
-  responseObject={}
-  try:
-    responseObject = json.loads(request_data)
-   
-    if(responseObject["coilStartAddress"] < 0 or responseObject["quantityCoils"] < 1 or len(responseObject["coilsArray"]) != responseObject["quantityCoils"] ):
-      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Bad Parameter"}
-      return json.dumps(responseObject)
-
-  except Exception as exception:
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Bad Parameter"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Client must be opened."}
     return json.dumps(responseObject)
 
-  rq = modbusClient.write_multiple_coils(responseObject["coilStartAddress"],responseObject["coilsArray"])
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["coilStartAddress"] < 0 or requestObject["quantityCoils"] != len(requestObject["coilsArray"]):
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+      return json.dumps(responseObject)
 
-  if not rq : return "fail"
-  return "successfull"
-# writeSingleCoilController END
+    for bit in requestObject["coilsArray"]:
+      if bit != 0 and bit != 1:
+        responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+        return json.dumps(responseObject)
+
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+    return json.dumps(responseObject)
+
+  modbusRequest = modbusClient.write_single_coil(requestObject["coilStartAddress"],requestObject["coilsArray"])
+
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    return json.dumps(responseObject)
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Successfull"}
+  return json.dumps(responseObject)
+# writeMultipleCoilsController END
 
 
 #############################################################

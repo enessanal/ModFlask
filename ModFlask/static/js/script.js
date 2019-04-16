@@ -1,6 +1,5 @@
 ﻿"use strict"
 
-
 ////////////////////////////////////////////
 // $(document).ready BEGIN
 $(document).ready(function()
@@ -25,7 +24,19 @@ $(document).ready(function()
 				data:JSON.stringify({coilStartAddress,quantityCoils,coilsArray}),
 				success: function(response)
 				{
-					print(response)
+					try 
+					{
+						let responseObject = JSON.parse(response)
+						let ip_address=responseObject["host"]
+						let port_number=responseObject["port"]
+						let message=responseObject["message"]
+						print(`${ip_address}:${port_number} => ${message}`)
+					} 
+					catch (exception) 
+					{
+						print(`Can't parse JSON. Original response => ${response}`)
+						print(`Error Message => +${exception.message}`)
+					}
 				},
 				error: function(error)
 				{
@@ -34,14 +45,11 @@ $(document).ready(function()
 		});
 	});
 
-
-
-
-
-	$("#btn_coilSet").click(function(event)
+	$(".btn_singleCoil").click(function(event)
 	{
 		let coilAddress=parseInt($("#txt_coilAddress").val())
-		let bit=1
+		let bit = 0
+		if($(this).attr("id") == "btn_coilSet") bit = 1
 
 		$.ajax(
 			{
@@ -51,7 +59,19 @@ $(document).ready(function()
 				type: "POST",
 				success: function(response) 
 				{
-					print(response)
+					try 
+					{
+						let responseObject = JSON.parse(response)
+						let ip_address=responseObject["host"]
+						let port_number=responseObject["port"]
+						let message=responseObject["message"]
+						print(`${ip_address}:${port_number} => ${message}`)
+					} 
+					catch (exception) 
+					{
+						print(`Can't parse JSON. Original response => ${response}`)
+						print(`Error Message => +${exception.message}`)
+					}
 				},
 				error: function(error) 
 				{
@@ -61,28 +81,8 @@ $(document).ready(function()
 	});
 
 
-	$("#btn_coilReset").click(function(event)
-	{
-		let coilAddress=parseInt($("#txt_coilAddress").val())
-		let bit=0
 
-		$.ajax(
-			{
-				url:"/api/writeSingleCoil",
-				data: JSON.stringify({coilAddress,bit}),
-				contentType: 'application/json',
-				type: "POST",
-				success: function(response) 
-				{
-					print(response)
-				},
-				error: function(error) 
-				{
-					print(error)
-				},
-			});
-	});
-	
+
 	
 	$("#txt_quantityCoils").focusout(function(event) 
 	{
@@ -116,19 +116,17 @@ $(document).ready(function()
 		}
 	});	
 
-
-
-
-
-
 	// Listener $("#chkbox_ClientStatus").change BEGIN
 	$("#chkbox_ClientStatus").change(function(event)
 	{
 		let open_client=$(this).is(":checked")
 
 		if (open_client) $(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
-		else $(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
-	
+		else 
+		{
+			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
+			$("#div_Operations").fadeOut()
+		}
 
 		let ip_address=$("#txt_IPOctet1").val()+"."+$("#txt_IPOctet2").val()+"."+$("#txt_IPOctet3").val()+"."+$("#txt_IPOctet4").val();
 		let port=parseInt($("#txt_portNumber").val())
@@ -147,7 +145,7 @@ $(document).ready(function()
 					let ip_address=responseObject["host"]
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
-					print("%s:%d => %s",ip_address,port_number,message)
+					print(`${ip_address}:${port_number} => ${message}`)
 					
 					if(message=="Client Opened" || message=="Already Opened" ) $("#div_Operations").fadeIn()
 					if(message=="Client Closed" || message=="Already Closed") $("#div_Operations").fadeOut()
@@ -157,8 +155,8 @@ $(document).ready(function()
 				} 
 				catch (exception) 
 				{
-					print("Can't parse JSON. Original response => "+response)
-					print("Error Message => "+exception.message)
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
 				}
 			},
 			error: function(error) 
@@ -248,10 +246,9 @@ function checkClientStatus()
 
 					if(message && ! $("#chkbox_ClientStatus").is(":checked"))
 					{ 
-						print("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						print(`${ip_address}:${port_number} => ${message} (Check:${$("#chkbox_ClientStatus").is(":checked")})`)
 						$('#chkbox_ClientStatus').bootstrapToggle("on")
-						
-						
+
 						$("#txt_IPOctet1").val(ip_address.split(".")[0]);
 						$("#txt_IPOctet2").val(ip_address.split(".")[1]);
 						$("#txt_IPOctet3").val(ip_address.split(".")[2]);
@@ -261,14 +258,14 @@ function checkClientStatus()
 					if(! message && $("#chkbox_ClientStatus").is(":checked")) 
 					{
 						$('#chkbox_ClientStatus').bootstrapToggle("on")
-						print("%s:%d => %s (Check:%o)",ip_address,port_number,message,$("#chkbox_ClientStatus").is(":checked"))
+						print(`${ip_address}:${port_number} => ${message} (Check:${$("#chkbox_ClientStatus").is(":checked")})`)
 						$('#chkbox_ClientStatus').bootstrapToggle("off")
 					}
 				} 
 				catch (exception) 
 				{
-					print("Can't parse JSON. Original response => "+response)
-					print("Error Message => "+exception.message)
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
 				}
 			},
 			error: function(error) 
