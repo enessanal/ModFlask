@@ -143,8 +143,12 @@ def writeMultipleCoilsController(request_data=False):
   except Exception as exception:
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
     return json.dumps(responseObject)
+  
+  for i in range(0,len(requestObject["coilsArray"])):
+    if requestObject["coilsArray"][i] == 1: requestObject["coilsArray"][i]=True
+    elif requestObject["coilsArray"][i] == 0: requestObject["coilsArray"][i]=False
 
-  modbusRequest = modbusClient.write_single_coil(requestObject["coilStartAddress"],requestObject["coilsArray"])
+  modbusRequest = modbusClient.write_multiple_coils(requestObject["coilStartAddress"],requestObject["coilsArray"])
 
   if not modbusRequest: 
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
@@ -153,6 +157,35 @@ def writeMultipleCoilsController(request_data=False):
   responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Successfull"}
   return json.dumps(responseObject)
 # writeMultipleCoilsController END
+
+
+def readCoilsController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["coilAddress"] < 0 or requestObject["quantity"] < 1:
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Bad Parameter"}
+      return json.dumps(responseObject)
+      
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Bad Parameter"}
+    return json.dumps(responseObject)
+  
+  modbusRequest = modbusClient.read_coils(requestObject["coilAddress"],requestObject["quantity"])
+
+  for i in range(0,len(modbusRequest)):
+    if modbusRequest[i]: modbusRequest[i]=1
+    elif not modbusRequest[i]: modbusRequest[i]=0
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Successfull","response":modbusRequest}
+
+  return json.dumps(responseObject)
+
+
 
 
 #############################################################
@@ -193,6 +226,13 @@ def writeSingleCoilRoute():
 def writeMultipleCoilsRoute():
   return writeMultipleCoilsController(request.data)
 # writeSingleCoilRoute END
+
+
+# readCoilsRoute BEGIN
+@app.route("/api/readCoils",methods=["POST"])
+def readCoilsRoute():
+  return readCoilsController(request.data)
+# readCoilsRoute END
 
 
 #############################################################

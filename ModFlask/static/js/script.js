@@ -79,10 +79,42 @@ $(document).ready(function()
 				},
 			});
 	});
+	
+	$("#btn_receiveCoils").click(function(event)
+	{
+		let coilAddress=parseInt($("#txt_readCoilStartAddress").val())
+		let quantity=parseInt($("#txt_readQuantityCoils").val())
 
-
-
-
+		print(coilAddress,quantity)
+		$.ajax(
+		{
+			url:"/api/readCoils",
+			data: JSON.stringify({coilAddress,quantity}),
+			contentType: 'application/json',
+			type: "POST",
+			success: function(response) 
+			{
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]
+					let responseData=responseObject["response"]
+					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+				} 
+				catch (exception) 
+				{
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
+				}
+			},
+			error: function(error) 
+			{
+				print(error)
+			},
+		});
+	});
 	
 	$("#txt_quantityCoils").focusout(function(event) 
 	{
@@ -108,9 +140,9 @@ $(document).ready(function()
 	});	
 
 
-	$("#txt_coilStartAddress").keypress(function(event) 
+	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress").keypress(function(event) 
 	{
-		if(event.which != 48 && event.which != 49)
+		if(!(event.which >=48 && event.which<=57))
 		{
 			event.preventDefault();
 		}
@@ -281,6 +313,9 @@ function checkClientStatus()
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_readCoilStartAddress").val(0)
+	$("#txt_readQuantityCoils").val(1)
+
 	$("#txt_coilsArray").val("1111100000");
 	$("#txt_quantityCoils").val("10");
 	$("#txt_coilsArray").attr("maxlength",$("#txt_quantityCoils").val());
