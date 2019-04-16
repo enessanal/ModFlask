@@ -24,7 +24,7 @@ import time
 import json
 import re
 import argparse
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 argumentParser=argparse.ArgumentParser(description='ModFlask - Flask Web Client for Modbus')
 argumentParser.add_argument("--host",help="IP Address for Web Client",default="127.0.0.1")

@@ -7,7 +7,12 @@ from helpers import *
 
 # homeController BEGIN
 def homeController():
-  return app.send_static_file("index.html")
+  # return app.send_static_file("index.html")
+  title="ModFlask - Flask Web Client for Modbus"
+  header="Modbus Web Client"
+  parameters={"title":title,"header":header}
+
+  return render_template("index.html",parameters=parameters)
 # homeController END
 
 
