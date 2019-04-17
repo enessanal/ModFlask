@@ -8,6 +8,113 @@ $(document).ready(function()
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
+
+	$("#btn_receiveInputRegisters").click(function(event)
+	{
+		let registerAddress=parseInt($("#txt_readInputRegisterStartAddress").val())
+		let quantity=parseInt($("#txt_readQuantityInputRegisters").val())
+
+		$.ajax(
+		{
+			url:"/api/readInputRegisters",
+			data: JSON.stringify({registerAddress,quantity}),
+			contentType: 'application/json',
+			type: "POST",
+			success: function(response) 
+			{
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]
+					let responseData=responseObject["response"]
+					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+				} 
+				catch (exception) 
+				{
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
+				}
+			},
+			error: function(error) 
+			{
+				print(error)
+			},
+		});
+	});
+
+	$("#btn_receiveContacts").click(function(event)
+	{
+		let contactAddress=parseInt($("#txt_readContactStartAddress").val())
+		let quantity=parseInt($("#txt_readQuantityContacts").val())
+
+		$.ajax(
+		{
+			url:"/api/readContacts",
+			data: JSON.stringify({contactAddress,quantity}),
+			contentType: 'application/json',
+			type: "POST",
+			success: function(response) 
+			{
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]
+					let responseData=responseObject["response"]
+					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+				} 
+				catch (exception) 
+				{
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
+				}
+			},
+			error: function(error) 
+			{
+				print(error)
+			},
+		});
+	});
+
+	$("#btn_receiveRegisters").click(function(event)
+	{
+		let registerAddress=parseInt($("#txt_readRegisterStartAddress").val())
+		let quantity=parseInt($("#txt_readQuantityRegisters").val())
+
+		$.ajax(
+		{
+			url:"/api/readRegisters",
+			data: JSON.stringify({registerAddress,quantity}),
+			contentType: 'application/json',
+			type: "POST",
+			success: function(response) 
+			{
+				try 
+				{
+					let responseObject = JSON.parse(response)
+					let ip_address=responseObject["host"]
+					let port_number=responseObject["port"]
+					let message=responseObject["message"]
+					let responseData=responseObject["response"]
+					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+				} 
+				catch (exception) 
+				{
+					print(`Can't parse JSON. Original response => ${response}`)
+					print(`Error Message => +${exception.message}`)
+				}
+			},
+			error: function(error) 
+			{
+				print(error)
+			},
+		});
+	});
+
+
 	$("#btn_sendRegisters").click(function(event)
 	{
 		let registerStartAddress =	parseInt($("#txt_registerStartAddress").val());
@@ -16,7 +123,6 @@ $(document).ready(function()
 		$("#txt_registersArray").val(replace_all($("#txt_registersArray").val()," ",""));
 
 		$("#txt_registersArray").val().split(",").forEach(value => {registersArray.push(parseInt(value));});
-		print(registersArray)
 		$.ajax(
 			{
 				url:"/api/writeMultipleRegisters",
@@ -156,7 +262,6 @@ $(document).ready(function()
 		let coilAddress=parseInt($("#txt_readCoilStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityCoils").val())
 
-		print(coilAddress,quantity)
 		$.ajax(
 		{
 			url:"/api/readCoils",
@@ -376,6 +481,9 @@ function checkClientStatus()
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_readRegisterStartAddress").val(0)
+	$("#txt_readQuantityRegisters").val(10)
+
 	$("#txt_registerStartAddress").val(0)
 	$("#txt_quantityRegisters").val(10)
 	$("#txt_registersArray").val("0,0,0,0,0,0,0,0,0,0")

@@ -132,8 +132,47 @@
       <!-- Write Multiple Registers Row END -->
 
 
+      <!-- Read Registers Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Registers (Holding Registers)</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Register Start Address</b></label>
+        <input id="txt_readRegisterStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Registers</b></label>
+        <input id="txt_readQuantityRegisters" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <button id="btn_receiveRegisters" type="button" class="btn btn-info">Receive</button>
+      </div>
+      <!-- Read Registers Row END -->
 
+      <hr style="border-top: 3px solid #aaa;">
 
+      <!-- Read Concats Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+          <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Contacts (Discrete Inputs)</b></h4>
+          <label style="font-size:medium; margin-right: 1px"><b>Contact Start Address</b></label>
+          <input id="txt_readContactStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+          <br>
+          <label style="font-size:medium; margin-right: 13px"><b>Quantity of Contacts</b></label>
+          <input id="txt_readQuantityContacts" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+          <br>
+          <button id="btn_receiveContacts" type="button" class="btn btn-info">Receive</button>
+        </div>
+        <!-- Read Coils Row END -->
+  
+
+      <!-- Read Input Registers Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Input Registers</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Register Start Address</b></label>
+        <input id="txt_readInputRegisterStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Registers</b></label>
+        <input id="txt_readQuantityInputRegisters" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <button id="btn_receiveInputRegisters" type="button" class="btn btn-info">Receive</button>
+      </div>
+      <!-- Read Input Registers Row END -->
 
 
 

@@ -3,7 +3,6 @@ from helpers import *
 # Controllers BEGIN
 #############################################################
 
-
 # homeController BEGIN
 def homeController():
   # return app.send_static_file("index.html")
@@ -219,29 +218,109 @@ def writeRegisterController(request_data=False):
 # writeMultipleRegistersController BEGIN
 def writeMultipleRegistersController(request_data=False):
   if not modbusClient.is_open():
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Client must be opened."}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Registers Write: Client must be opened."}
     return json.dumps(responseObject)
 
   requestObject={}
   try:
     requestObject = json.loads(request_data)
     if requestObject["registerStartAddress"] < 0 or requestObject["quantityRegisters"] != len(requestObject["registersArray"]):
-      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Registers Write: Bad Parameter"}
       return json.dumps(responseObject)
 
   except Exception as exception:
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Registers Write: Bad Parameter"}
     return json.dumps(responseObject)
 
   modbusRequest = modbusClient.write_multiple_registers(requestObject["registerStartAddress"],requestObject["registersArray"])
 
   if not modbusRequest: 
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Registers Write: Fail"}
     return json.dumps(responseObject)
 
-  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Successfull"}
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Registers Write: Successfull"}
   return json.dumps(responseObject)
 # writeMultipleRegistersController END
+
+
+# readRegistersController BEGIN
+def readRegistersController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["registerAddress"] < 0 or requestObject["quantity"] < 1:
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Bad Parameter"}
+      return json.dumps(responseObject)
+      
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Bad Parameter"}
+    return json.dumps(responseObject)
+  
+  modbusRequest = modbusClient.read_holding_registers(requestObject["registerAddress"],requestObject["quantity"])
+  print(modbusRequest)
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Successfull","response":modbusRequest}
+
+  return json.dumps(responseObject)
+# readRegistersController END
+
+
+# readContactsController BEGIN
+def readContactsController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["contactsAddress"] < 0 or requestObject["quantity"] < 1:
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Bad Parameter"}
+      return json.dumps(responseObject)
+      
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Bad Parameter"}
+    return json.dumps(responseObject)
+  
+  modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactsAddress"],requestObject["quantity"])
+
+  for i in range(0,len(modbusRequest)):
+    if modbusRequest[i]: modbusRequest[i]=1
+    elif not modbusRequest[i]: modbusRequest[i]=0
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Successfull","response":modbusRequest}
+
+  return json.dumps(responseObject)
+# readContactsController END
+
+
+# readRegistersController BEGIN
+def readRegistersController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["registerAddress"] < 0 or requestObject["quantity"] < 1:
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Bad Parameter"}
+      return json.dumps(responseObject)
+      
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Bad Parameter"}
+    return json.dumps(responseObject)
+  
+  modbusRequest = modbusClient.read_input_registers(requestObject["registerAddress"],requestObject["quantity"])
+  print(modbusRequest)
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Successfull","response":modbusRequest}
+
+  return json.dumps(responseObject)
+# readRegistersController END
+
 
 
 
@@ -306,6 +385,26 @@ def writeMultipleRegistersRoute():
   return writeMultipleRegistersController(request.data)
 # writeMultipleRegistersRoute END
 
+
+# readRegistersRoute BEGIN
+@app.route("/api/readRegisters",methods=["POST"])
+def readRegistersRoute():
+  return readRegistersController(request.data)
+# readRegistersRoute END
+
+
+# readContactsRoute BEGIN
+@app.route("/api/readContacts",methods=["POST"])
+def readContactsRoute():
+  return readContactsController(request.data)
+# readContactsRoute END
+
+
+# readInputRegistersRoute BEGIN
+@app.route("/api/readInputRegisters",methods=["POST"])
+def readInputRegistersRoute():
+  return readRegistersController(request.data)
+# readInputRegistersRoute END
 
 
 
