@@ -2,13 +2,12 @@
 <html>
   <head>
     <title>{{ parameters["title"] }}</title>
-    <link rel="icon" data-emoji="🛰" type="image/png">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/bootstrap-toggle.css">
+    <link rel="stylesheet" href="static/css/style.css">
 
     <script src="static/js/jquery.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
@@ -19,12 +18,12 @@
   </head>
   <body>
   <div class="container">
-    <div class="page-header" style="text-align:center"> 
+    <div class="page-header" style="text-align:center; border-bottom: 3px solid #444;"> 
       <h2><b>{{ parameters["header"] }}</b></h2>
     </div>
 
     <!-- Connection Row BEGIN -->
-    <div class="row well">
+    <div class="row well" style="border: 7px solid #b8b4b4; border-radius: 10px;">
       <div class="col-md-6"">
         <div class="row">
           <div class="col-md-12">
@@ -54,12 +53,13 @@
     <!-- Connection Row END -->
 
     <!-- Operations Row BEGIN -->
-    <div class="row well" id="div_Operations" hidden>
+    <div class="row well" id="div_Operations" style="border: 7px solid #b8b4b4; border-radius: 10px;" hidden>
       <div class="row" style="padding:0px">
         <h3 style="margin-top:0px"><b>Operations</b></h3>
       </div>
 
-      <div class="row well" style="padding-top:8px; padding-left:5px">
+      <!-- Write Single Coil Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
         <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Single Coil (Discrete Outputs)</b></h4>
         <label style="font-size:medium; margin-right: 32px"><b>Coil Address</b></label>
         <input id="txt_coilAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
@@ -67,8 +67,11 @@
         <button id="btn_coilSet" type="button" class="btn btn-success btn_singleCoil">1</button>
         <button id="btn_coilReset" type="button" class="btn btn-danger btn_singleCoil">0</button>
       </div>
+      <!-- Write Single Coil Row END -->
 
-      <div class="row well" style="padding-top:8px; padding-left:5px">
+
+      <!-- Write Multiple Coils Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
         <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Multiple Coils (Discrete Outputs)</b></h4>
         <label style="font-size:medium; margin-right: 1px"><b>Coil Start Address</b></label>
         <input id="txt_coilStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
@@ -81,10 +84,12 @@
         <br>
         <button id="btn_sendCoils" type="button" class="btn btn-success">Send</button>
       </div>
+      <!-- Write Multiple Coils Row END -->
 
 
-      <div class="row well" style="padding-top:8px; padding-left:5px">
-        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Real Coils (Discrete Outputs)</b></h4>
+      <!-- Read Coils Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Coils (Discrete Outputs)</b></h4>
         <label style="font-size:medium; margin-right: 1px"><b>Coil Start Address</b></label>
         <input id="txt_readCoilStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
         <br>
@@ -93,6 +98,41 @@
         <br>
         <button id="btn_receiveCoils" type="button" class="btn btn-info">Receive</button>
       </div>
+      <!-- Read Coils Row END -->
+
+
+      <!-- Write Single Register Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Single Register (Holding Registers)</b></h4>
+        <label style="font-size:medium; margin-right: 32px"><b>Register Address</b></label>
+        <input id="txt_registerAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 54px"><b>Register Value</b></label>
+        <input id="txt_registerValue" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="5">
+        <br>
+        <button id="btn_sendRegister" type="button" class="btn btn-success">Send</button>
+      </div>
+      <!-- Write Single Register Row END -->
+
+
+      <!-- Write Multiple Registers Row BEGIN -->
+      <div class="row well my_border" style="padding-top:8px; padding-left:5px">
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Write Multiple Registers (Holding Registers)</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Register Start Address</b></label>
+        <input id="txt_registerStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Registers</b></label>
+        <input id="txt_quantityRegisters" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 55px"><b>Registers Array</b></label>
+        <input id="txt_registersArray" class="input-sm" style="width:80%; font-weight:bold; font-size:medium;">
+        <br>
+        <button id="btn_sendRegisters" type="button" class="btn btn-success">Send</button>
+      </div>
+      <!-- Write Multiple Registers Row END -->
+
+
+
 
 
 

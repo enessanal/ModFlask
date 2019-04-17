@@ -159,6 +159,7 @@ def writeMultipleCoilsController(request_data=False):
 # writeMultipleCoilsController END
 
 
+# readCoilsController BEGIN
 def readCoilsController(request_data=False):
   if not modbusClient.is_open():
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Client must be opened."}
@@ -184,6 +185,63 @@ def readCoilsController(request_data=False):
   responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Successfull","response":modbusRequest}
 
   return json.dumps(responseObject)
+# readCoilsController END
+
+
+# writeRegisterController BEGIN
+def writeRegisterController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Register Write: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["registerAddress"] < 0:
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Register Write: Bad Parameter"}
+      return json.dumps(responseObject)
+
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Register Write: Bad Parameter"}
+    return json.dumps(responseObject)
+
+  modbusRequest = modbusClient.write_single_register(requestObject["registerAddress"],requestObject["registerValue"])
+
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Register Write: Fail"}
+    return json.dumps(responseObject)
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Single Register Write: Successfull"}
+  return json.dumps(responseObject)
+# writeRegisterController END
+
+
+# writeMultipleRegistersController BEGIN
+def writeMultipleRegistersController(request_data=False):
+  if not modbusClient.is_open():
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Client must be opened."}
+    return json.dumps(responseObject)
+
+  requestObject={}
+  try:
+    requestObject = json.loads(request_data)
+    if requestObject["registerStartAddress"] < 0 or requestObject["quantityRegisters"] != len(requestObject["registersArray"]):
+      responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+      return json.dumps(responseObject)
+
+  except Exception as exception:
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Bad Parameter"}
+    return json.dumps(responseObject)
+
+  modbusRequest = modbusClient.write_multiple_registers(requestObject["registerStartAddress"],requestObject["registersArray"])
+
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    return json.dumps(responseObject)
+
+  responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Successfull"}
+  return json.dumps(responseObject)
+# writeMultipleRegistersController END
 
 
 
@@ -233,6 +291,22 @@ def writeMultipleCoilsRoute():
 def readCoilsRoute():
   return readCoilsController(request.data)
 # readCoilsRoute END
+
+
+# writeRegisterRoute BEGIN
+@app.route("/api/writeRegister",methods=["POST"])
+def writeRegisterRoute():
+  return writeRegisterController(request.data)
+# writeRegisterRoute END
+
+
+# writeMultipleRegistersRoute BEGIN
+@app.route("/api/writeMultipleRegisters",methods=["POST"])
+def writeMultipleRegistersRoute():
+  return writeMultipleRegistersController(request.data)
+# writeMultipleRegistersRoute END
+
+
 
 
 #############################################################

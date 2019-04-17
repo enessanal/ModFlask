@@ -8,6 +8,77 @@ $(document).ready(function()
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
+	$("#btn_sendRegisters").click(function(event)
+	{
+		let registerStartAddress =	parseInt($("#txt_registerStartAddress").val());
+		let quantityRegisters =	parseInt($("#txt_quantityRegisters").val());
+		let registersArray=[];
+		$("#txt_registersArray").val(replace_all($("#txt_registersArray").val()," ",""));
+
+		$("#txt_registersArray").val().split(",").forEach(value => {registersArray.push(parseInt(value));});
+		print(registersArray)
+		$.ajax(
+			{
+				url:"/api/writeMultipleRegisters",
+				type:"POST",
+				contentType:"application/json",
+				data:JSON.stringify({registerStartAddress,quantityRegisters,registersArray}),
+				success: function(response)
+				{
+					try 
+					{
+						let responseObject = JSON.parse(response)
+						let ip_address=responseObject["host"]
+						let port_number=responseObject["port"]
+						let message=responseObject["message"]
+						print(`${ip_address}:${port_number} => ${message}`)
+					} 
+					catch (exception) 
+					{
+						print(`Can't parse JSON. Original response => ${response}`)
+						print(`Error Message => +${exception.message}`)
+					}
+				},
+				error: function(error)
+				{
+					print(error.message)
+				}
+		});
+	});
+
+	$("#btn_sendRegister").click(function(event)
+	{
+		let registerAddress =	parseInt($("#txt_registerAddress").val());
+		let registerValue =	parseInt($("#txt_registerValue").val());
+
+		$.ajax(
+			{
+				url:"/api/writeRegister",
+				type:"POST",
+				contentType:"application/json",
+				data:JSON.stringify({registerAddress,registerValue}),
+				success: function(response)
+				{
+					try 
+					{
+						let responseObject = JSON.parse(response)
+						let ip_address=responseObject["host"]
+						let port_number=responseObject["port"]
+						let message=responseObject["message"]
+						print(`${ip_address}:${port_number} => ${message}`)
+					} 
+					catch (exception) 
+					{
+						print(`Can't parse JSON. Original response => ${response}`)
+						print(`Error Message => +${exception.message}`)
+					}
+				},
+				error: function(error)
+				{
+					print(error.message)
+				}
+		});
+	});
 
 	$("#btn_sendCoils").click(function(event)
 	{
@@ -130,7 +201,6 @@ $(document).ready(function()
 		}
 	});		
 
-
 	$("#txt_coilsArray").keypress(function(event) 
 	{
 		if(event.which != 48 && event.which != 49)
@@ -139,8 +209,7 @@ $(document).ready(function()
 		}
 	});	
 
-
-	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress").keypress(function(event) 
+	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress, #txt_registerAddress, #txt_registerValue").keypress(function(event) 
 	{
 		if(!(event.which >=48 && event.which<=57))
 		{
@@ -199,7 +268,6 @@ $(document).ready(function()
 	});
 	// Listener $("#chkbox_ClientStatus").change END
 
-
 	// Listener $(".txt_ipOctet").focusout BEGIN
 	$(".txt_ipOctet").focusout(function(event) 
 	{
@@ -211,7 +279,6 @@ $(document).ready(function()
 	});
 	// Listener $(".txt_ipOctet").focusout END
 
-
 	// Listener $(".txt_portNumber").focusout BEGIN
 	$(".txt_portNumber").focusout(function(event) 
 	{
@@ -222,7 +289,6 @@ $(document).ready(function()
 		}
 	});	
 	// Listener $(".txt_portNumber").focusout END
-
 
 $(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
 {
@@ -237,7 +303,6 @@ $(".txt_ipOctet, .txt_portNumber").keyup(function(event)
 
 });
 
-
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
 	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
 	{
@@ -247,8 +312,6 @@ $(".txt_ipOctet, .txt_portNumber").keyup(function(event)
 		}
 	});
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
-
-
 
 });
 // $(document).ready END
@@ -313,6 +376,12 @@ function checkClientStatus()
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_registerStartAddress").val(0)
+	$("#txt_quantityRegisters").val(10)
+	$("#txt_registersArray").val("0,0,0,0,0,0,0,0,0,0")
+	$("#txt_registerAddress").val(0)
+	$("#txt_registerValue").val(65535)
+
 	$("#txt_readCoilStartAddress").val(0)
 	$("#txt_readQuantityCoils").val(1)
 
@@ -337,6 +406,15 @@ function print(...strings)
   console.log(...strings);
 }
 // Function print END
+
+// Function replace_all BEGIN
+function replace_all(string, old_phrase, new_phrase)
+{
+	return string.replace(new RegExp(old_phrase,"g"),new_phrase)
+}
+// Function replace_all END
+
+
 
 
 // HelperFunctions END
