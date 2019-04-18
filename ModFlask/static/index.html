@@ -37,6 +37,7 @@
                 <label style="font-size:large;"><b>.</b></label>
                 <input id="txt_IPOctet4" class="input-sm txt_ipOctet" style="width: 60px; font-weight:bold; font-size:large;" maxlength="3" >
             </div>
+
             <div class="row" style="margin-bottom: 10px">
                 <label style="font-size:large; margin-right: 16px"><b>Port Number</b></label>
                 <input id="txt_portNumber" class="input-sm txt_portNumber" style="width: 75px; font-weight:bold; font-size:large;" maxlength="5">
@@ -45,6 +46,7 @@
             <div class="row"> 
               <label style="font-size:large; margin-right: 10px"><b>Connection</b></label>
               <input type="checkbox" id="chkbox_ClientStatus" data-on="On" data-off="Off" data-toggle="toggle" data-onstyle="success" data-offstyle="danger" data-size="medium">
+              <img id="img_connectionSpinner" src=static/images/loading32x32.gif style="margin-left:20px" hidden>   
             </div>
           </div>
         </div>
@@ -54,7 +56,7 @@
 
     <!-- Operations Row BEGIN -->
     <div class="row well" id="div_Operations" style="border: 7px solid #b8b4b4; border-radius: 10px;" hidden>
-      
+
       <div class="row" style="padding:0px">
         <h3 style="margin-top:0px"><b>Operations</b></h3>
       </div>

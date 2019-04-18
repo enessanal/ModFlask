@@ -454,8 +454,16 @@ $(document).ready(function()
 	$("#chkbox_ClientStatus").change(function(event)
 	{
 		let open_client=$(this).is(":checked")
+		
+		
 
-		if (open_client) $(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
+		if (open_client) 
+		{
+			print(open_client)
+			$("#img_connectionSpinner").show()
+			$(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
+		
+		}
 		else 
 		{
 			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
@@ -474,6 +482,7 @@ $(document).ready(function()
 			contentType: 'application/json',
 			success: function(response) 
 			{
+				$("#img_connectionSpinner").hide()
 				try 
 				{
 					let responseObject = JSON.parse(response)
@@ -496,6 +505,7 @@ $(document).ready(function()
 			},
 			error: function(error) 
 			{
+				$("#img_connectionSpinner").hide()
 				print(error)
 			},
 		});
