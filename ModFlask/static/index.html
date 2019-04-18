@@ -54,6 +54,7 @@
 
     <!-- Operations Row BEGIN -->
     <div class="row well" id="div_Operations" style="border: 7px solid #b8b4b4; border-radius: 10px;" hidden>
+      
       <div class="row" style="padding:0px">
         <h3 style="margin-top:0px"><b>Operations</b></h3>
       </div>
@@ -97,6 +98,9 @@
         <input id="txt_readQuantityCoils" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
         <br>
         <button id="btn_receiveCoils" type="button" class="btn btn-info">Receive</button>
+        <br> 
+        <div id="div_Results_Coils" class="alert alert-warning div_result" role="alert" style="margin-top:5px; overflow-wrap: break-word" hidden></div>
+        
       </div>
       <!-- Read Coils Row END -->
 
@@ -141,7 +145,9 @@
         <label style="font-size:medium; margin-right: 13px"><b>Quantity of Registers</b></label>
         <input id="txt_readQuantityRegisters" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
         <br>
-        <button id="btn_receiveRegisters" type="button" class="btn btn-info">Receive</button>
+        <button id="btn_receiveRegisters" type="button" class="btn btn-info">Receive</button> 
+        <br> 
+        <div id="div_Results_Registers" class="alert alert-warning div_result" role="alert" style="margin-top:5px; overflow-wrap: break-word" hidden></div>
       </div>
       <!-- Read Registers Row END -->
 
@@ -149,15 +155,17 @@
 
       <!-- Read Concats Row BEGIN -->
       <div class="row well my_border" style="padding-top:8px; padding-left:5px">
-          <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Contacts (Discrete Inputs)</b></h4>
-          <label style="font-size:medium; margin-right: 1px"><b>Contact Start Address</b></label>
-          <input id="txt_readContactStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
-          <br>
-          <label style="font-size:medium; margin-right: 13px"><b>Quantity of Contacts</b></label>
-          <input id="txt_readQuantityContacts" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
-          <br>
-          <button id="btn_receiveContacts" type="button" class="btn btn-info">Receive</button>
-        </div>
+        <h4 style="margin-top:0px; margin-bottom:15px;"><b>Read Contacts (Discrete Inputs)</b></h4>
+        <label style="font-size:medium; margin-right: 1px"><b>Contact Start Address</b></label>
+        <input id="txt_readContactStartAddress" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <label style="font-size:medium; margin-right: 13px"><b>Quantity of Contacts</b></label>
+        <input id="txt_readQuantityContacts" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
+        <br>
+        <button id="btn_receiveContacts" type="button" class="btn btn-info">Receive</button>
+        <br> 
+        <div id="div_Results_Contacts" class="alert alert-warning div_result" role="alert" style="margin-top:5px; overflow-wrap: break-word" hidden></div>
+      </div>
         <!-- Read Coils Row END -->
   
 
@@ -171,6 +179,8 @@
         <input id="txt_readQuantityInputRegisters" class="input-sm" style="width:70px; font-weight:bold; font-size:medium;" maxlength="4">
         <br>
         <button id="btn_receiveInputRegisters" type="button" class="btn btn-info">Receive</button>
+        <br> 
+        <div id="div_Results_Input_Registers" class="alert alert-warning div_result" role="alert" style="margin-top:5px; overflow-wrap: break-word" hidden></div>
       </div>
       <!-- Read Input Registers Row END -->
 

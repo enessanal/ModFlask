@@ -277,7 +277,8 @@ def readContactsController(request_data=False):
   requestObject={}
   try:
     requestObject = json.loads(request_data)
-    if requestObject["contactsAddress"] < 0 or requestObject["quantity"] < 1:
+ 
+    if requestObject["contactAddress"] < 0 or requestObject["quantity"] < 1:
       responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Bad Parameter"}
       return json.dumps(responseObject)
       
@@ -285,7 +286,7 @@ def readContactsController(request_data=False):
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Bad Parameter"}
     return json.dumps(responseObject)
   
-  modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactsAddress"],requestObject["quantity"])
+  modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactAddress"],requestObject["quantity"])
 
   for i in range(0,len(modbusRequest)):
     if modbusRequest[i]: modbusRequest[i]=1
@@ -298,7 +299,7 @@ def readContactsController(request_data=False):
 
 
 # readRegistersController BEGIN
-def readRegistersController(request_data=False):
+def readInputRegistersController(request_data=False):
   if not modbusClient.is_open():
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Client must be opened."}
     return json.dumps(responseObject)
@@ -403,7 +404,7 @@ def readContactsRoute():
 # readInputRegistersRoute BEGIN
 @app.route("/api/readInputRegisters",methods=["POST"])
 def readInputRegistersRoute():
-  return readRegistersController(request.data)
+  return readInputRegistersController(request.data)
 # readInputRegistersRoute END
 
 

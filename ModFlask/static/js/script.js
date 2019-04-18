@@ -4,13 +4,90 @@
 // $(document).ready BEGIN
 $(document).ready(function()
 {
+	$(document).on('keypress',function(e) 
+	{
+		if(e.which == 13) 
+		{
+			if(!$("#chkbox_ClientStatus").is(":checked")) 
+			{ 
+				$('#chkbox_ClientStatus').bootstrapToggle("on")
+			}
+		}
+});
+
 	setDefaultValuesforInputs();
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
 
+
+	// $(".input-strict-digit").keypress(function(event)
+	// {
+		
+	// 	if(!(event.which >=48 && event.which<=57))
+	// 	{
+	// 		event.preventDefault();
+	// 	}
+	// });
+
+
+	
+	$(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
+	{
+		if(event.which >=48 && event.which<=57)
+		{
+			if($(this).attr('id')=="txt_IPOctet1" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet2").val(""); $("#txt_IPOctet2").focus(); }
+			if($(this).attr('id')=="txt_IPOctet2" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet3").val(""); $("#txt_IPOctet3").focus(); }
+			if($(this).attr('id')=="txt_IPOctet3" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet4").val(""); $("#txt_IPOctet4").focus();}
+			if($(this).attr('id')=="txt_IPOctet4" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_portNumber").focus();}
+			if($(this).attr('id')=="txt_portNumber" && $(this).val().length > 1 && parseInt($(this).val()) > 9000 ) $(this).blur();
+		}
+
+	});
+
+	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
+	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
+	{
+		if(!(event.which >=48 && event.which<=57))
+		{
+			event.preventDefault();
+		}
+	});
+	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
+	
+	$("#txt_quantityCoils").keypress(function(event) 
+	{
+		if(!(event.which >=48 && event.which<=57))
+		{
+			event.preventDefault();
+		}
+	});		
+
+	$("#txt_coilsArray").keypress(function(event) 
+	{
+		if(event.which != 48 && event.which != 49)
+		{
+			event.preventDefault();
+		}
+	});	
+
+	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress, #txt_registerAddress, #txt_registerValue").keypress(function(event) 
+	{
+		if(!(event.which >=48 && event.which<=57))
+		{
+			event.preventDefault();
+		}
+	});	
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
 	$("#btn_receiveInputRegisters").click(function(event)
 	{
+		$("#div_Results_Input_Registers").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
+		$("#div_Results_Input_Registers").slideUp();
+		$("#div_Results_Input_Registers").text("");
+
 		let registerAddress=parseInt($("#txt_readInputRegisterStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityInputRegisters").val())
 
@@ -30,22 +107,42 @@ $(document).ready(function()
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
 					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+
+					$("#div_Results_Input_Registers").text(responseData);
+					$("#div_Results_Input_Registers").addClass("alert-success");
+					$("#div_Results_Input_Registers").slideDown();
 				} 
-				catch (exception) 
+				catch (exception)
 				{
-					print(`Can't parse JSON. Original response => ${response}`)
-					print(`Error Message => +${exception.message}`)
+					let r1=`Can't parse JSON. Original response => ${response}`;
+					let r2=`Error Message => +${exception.message}`;
+					print(r1)
+					print(r2)
+					let r3=r1+"<br>"+r2
+				
+					$("#div_Results_Input_Registers").text(r3);
+					$("#div_Results_Input_Registers").addClass("alert-warning");
+					$("#div_Results_Input_Registers").slideDown();
+
 				}
 			},
 			error: function(error) 
-			{
+			{				
 				print(error)
+				$("#div_Results_Input_Registers").text(error);
+				$("#div_Results_Input_Registers").addClass("alert-danger");
+				$("#div_Results_Input_Registers").slideDown();
 			},
 		});
 	});
 
 	$("#btn_receiveContacts").click(function(event)
 	{
+		$("#div_Results_Contacts").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
+		$("#div_Results_Contacts").slideUp();
+		$("#div_Results_Contacts").text("");
+
+
 		let contactAddress=parseInt($("#txt_readContactStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityContacts").val())
 
@@ -65,22 +162,41 @@ $(document).ready(function()
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
 					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+
+
+					$("#div_Results_Contacts").text(responseData);
+					$("#div_Results_Contacts").addClass("alert-success");
+					$("#div_Results_Contacts").slideDown();
 				} 
 				catch (exception) 
 				{
-					print(`Can't parse JSON. Original response => ${response}`)
-					print(`Error Message => +${exception.message}`)
+					let r1=`Can't parse JSON. Original response => ${response}`;
+					let r2=`Error Message => +${exception.message}`;
+					print(r1)
+					print(r2)
+					let r3=r1+"<br>"+r2
+				
+					$("#div_Results_Contacts").text(r3);
+					$("#div_Results_Contacts").addClass("alert-warning");
+					$("#div_Results_Contacts").slideDown();
 				}
 			},
 			error: function(error) 
 			{
 				print(error)
+				$("#div_Results_Contacts").text(error);
+				$("#div_Results_Contacts").addClass("alert-danger");
+				$("#div_Results_Contacts").slideDown();
 			},
 		});
 	});
 
 	$("#btn_receiveRegisters").click(function(event)
-	{
+	{		
+		$("#div_Results_Registers").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
+		$("#div_Results_Registers").slideUp();
+		$("#div_Results_Registers").text("");
+
 		let registerAddress=parseInt($("#txt_readRegisterStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityRegisters").val())
 
@@ -100,20 +216,33 @@ $(document).ready(function()
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
 					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+
+					$("#div_Results_Registers").text(responseData);
+					$("#div_Results_Registers").addClass("alert-success");
+					$("#div_Results_Registers").slideDown();
 				} 
 				catch (exception) 
-				{
-					print(`Can't parse JSON. Original response => ${response}`)
-					print(`Error Message => +${exception.message}`)
+				{					
+					let r1=`Can't parse JSON. Original response => ${response}`;
+					let r2=`Error Message => +${exception.message}`;
+					print(r1)
+					print(r2)
+					let r3=r1+"<br>"+r2
+				
+					$("#div_Results_Registers").text(r3);
+					$("#div_Results_Registers").addClass("alert-warning");
+					$("#div_Results_Registers").slideDown();
 				}
 			},
 			error: function(error) 
 			{
 				print(error)
+				$("#div_Results_Registers").text(error);
+				$("#div_Results_Registers").addClass("alert-danger");
+				$("#div_Results_Registers").slideDown();
 			},
 		});
 	});
-
 
 	$("#btn_sendRegisters").click(function(event)
 	{
@@ -138,11 +267,14 @@ $(document).ready(function()
 						let port_number=responseObject["port"]
 						let message=responseObject["message"]
 						print(`${ip_address}:${port_number} => ${message}`)
+						
 					} 
 					catch (exception) 
 					{
-						print(`Can't parse JSON. Original response => ${response}`)
-						print(`Error Message => +${exception.message}`)
+						let r1=`Can't parse JSON. Original response => ${response}`;
+						let r2=`Error Message => +${exception.message}`;
+						print(r1)
+						print(r2)
 					}
 				},
 				error: function(error)
@@ -259,6 +391,11 @@ $(document).ready(function()
 	
 	$("#btn_receiveCoils").click(function(event)
 	{
+		$("#div_Results_Coils").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
+		$("#div_Results_Coils").slideUp();
+		$("#div_Results_Coils").text("");
+
+
 		let coilAddress=parseInt($("#txt_readCoilStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityCoils").val())
 
@@ -278,16 +415,31 @@ $(document).ready(function()
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
 					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
+
+					$("#div_Results_Coils").text(responseData);
+					$("#div_Results_Coils").addClass("alert-success");
+					$("#div_Results_Coils").slideDown();
+
 				} 
 				catch (exception) 
 				{
-					print(`Can't parse JSON. Original response => ${response}`)
-					print(`Error Message => +${exception.message}`)
+					let r1=`Can't parse JSON. Original response => ${response}`;
+					let r2=`Error Message => +${exception.message}`;
+					print(r1)
+					print(r2)
+					let r3=r1+"<br>"+r2
+					
+					$("#div_Results_Coils").text(r3);
+					$("#div_Results_Coils").addClass("alert-danger");
+					$("#div_Results_Coils").slideDown();
 				}
 			},
 			error: function(error) 
 			{
 				print(error)
+				$("#div_Results_Coils").text(error);
+				$("#div_Results_Coils").addClass("alert-warning");
+				$("#div_Results_Coils").slideDown();
 			},
 		});
 	});
@@ -296,30 +448,6 @@ $(document).ready(function()
 	{
 		$("#txt_coilsArray").attr("maxlength",$(this).val());
 		$("#txt_coilsArray").val("0".repeat($(this).val()))
-	});	
-
-	$("#txt_quantityCoils").keypress(function(event) 
-	{
-		if(!(event.which >=48 && event.which<=57))
-		{
-			event.preventDefault();
-		}
-	});		
-
-	$("#txt_coilsArray").keypress(function(event) 
-	{
-		if(event.which != 48 && event.which != 49)
-		{
-			event.preventDefault();
-		}
-	});	
-
-	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress, #txt_registerAddress, #txt_registerValue").keypress(function(event) 
-	{
-		if(!(event.which >=48 && event.which<=57))
-		{
-			event.preventDefault();
-		}
 	});	
 
 	// Listener $("#chkbox_ClientStatus").change BEGIN
@@ -331,6 +459,7 @@ $(document).ready(function()
 		else 
 		{
 			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
+			$(".div_result").hide()
 			$("#div_Operations").fadeOut()
 		}
 
@@ -395,29 +524,6 @@ $(document).ready(function()
 	});	
 	// Listener $(".txt_portNumber").focusout END
 
-$(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
-{
-	if(event.which >=48 && event.which<=57)
-	{
-		if($(this).attr('id')=="txt_IPOctet1" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet2").val(""); $("#txt_IPOctet2").focus(); }
-		if($(this).attr('id')=="txt_IPOctet2" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet3").val(""); $("#txt_IPOctet3").focus(); }
-		if($(this).attr('id')=="txt_IPOctet3" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet4").val(""); $("#txt_IPOctet4").focus();}
-		if($(this).attr('id')=="txt_IPOctet4" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_portNumber").focus();}
-		if($(this).attr('id')=="txt_portNumber" && $(this).val().length > 1 && parseInt($(this).val()) > 9000 ) $(this).blur();
-	}
-
-});
-
-	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
-	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
-	{
-		if(!(event.which >=48 && event.which<=57))
-		{
-			event.preventDefault();
-		}
-	});
-	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
-
 });
 // $(document).ready END
 ////////////////////////////////////////////
@@ -481,17 +587,25 @@ function checkClientStatus()
 // Function setDefaultValuesforInputs BEGIN
 function setDefaultValuesforInputs()
 {
+	$("#txt_readContactStartAddress").val(0)
+	$("#txt_readQuantityContacts").val(10)
+
+	$("#txt_readInputRegisterStartAddress").val(0)
+	$("#txt_readQuantityInputRegisters").val(10)
+
+	
 	$("#txt_readRegisterStartAddress").val(0)
 	$("#txt_readQuantityRegisters").val(10)
 
 	$("#txt_registerStartAddress").val(0)
 	$("#txt_quantityRegisters").val(10)
+
 	$("#txt_registersArray").val("0,0,0,0,0,0,0,0,0,0")
 	$("#txt_registerAddress").val(0)
 	$("#txt_registerValue").val(65535)
 
 	$("#txt_readCoilStartAddress").val(0)
-	$("#txt_readQuantityCoils").val(1)
+	$("#txt_readQuantityCoils").val(10)
 
 	$("#txt_coilsArray").val("1111100000");
 	$("#txt_quantityCoils").val("10");
