@@ -177,6 +177,12 @@ def readCoilsController(request_data=False):
   
   modbusRequest = modbusClient.read_coils(requestObject["coilAddress"],requestObject["quantity"])
 
+  
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    return json.dumps(responseObject)
+
+
   for i in range(0,len(modbusRequest)):
     if modbusRequest[i]: modbusRequest[i]=1
     elif not modbusRequest[i]: modbusRequest[i]=0
@@ -287,6 +293,10 @@ def readContactsController(request_data=False):
     return json.dumps(responseObject)
   
   modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactAddress"],requestObject["quantity"])
+  
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    return json.dumps(responseObject)
 
   for i in range(0,len(modbusRequest)):
     if modbusRequest[i]: modbusRequest[i]=1
