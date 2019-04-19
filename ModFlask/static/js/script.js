@@ -1,59 +1,52 @@
 ﻿"use strict"
 
+const txtID_PortNumber="#txt_portNumber";
+const txtIDs_IPOctets=["#txt_IPOctet1","#txt_IPOctet2","#txt_IPOctet3","#txt_IPOctet4"]
+const chkBxID_clientStatus="#chkbox_ClientStatus"
+
+const txtClass_IpOctets=".txt_ipOctet";
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////
 // $(document).ready BEGIN
 $(document).ready(function()
 {
+
 	setDefaultValuesforInputs();
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
-
-
-
-	// $(".input-strict-0_9").keypress(function(event)
-	// {
-	// 	if(!(event.which >=48 && event.which<=57))
-	// 	{
-	// 		event.preventDefault();
-	// 	}
-	// });
-
 	
-	// $(".input-strict-0_1").keypress(function(event)
-	// {
-	// 	if(event.which != 48 && event.which != 49)
-	// 	{
-	// 		event.preventDefault();
-	// 	}
-	// });
 
-
-
-	
-	$(".txt_ipOctet, .txt_portNumber").keyup(function(event) 
+	$(merge_selectors(txtClass_IpOctets, txtID_PortNumber)).keyup(function(event) 
 	{
 		if(event.which >=48 && event.which<=57)
 		{
-			if($(this).attr('id')=="txt_IPOctet1" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet2").val(""); $("#txt_IPOctet2").focus(); }
-			if($(this).attr('id')=="txt_IPOctet2" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet3").val(""); $("#txt_IPOctet3").focus(); }
-			if($(this).attr('id')=="txt_IPOctet3" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_IPOctet4").val(""); $("#txt_IPOctet4").focus();}
-			if($(this).attr('id')=="txt_IPOctet4" && $(this).val().length > 1 && parseInt($(this).val()) > 25 ){$("#txt_portNumber").focus();}
-			if($(this).attr('id')=="txt_portNumber" && $(this).val().length > 1 && parseInt($(this).val()) > 9000 ) $(this).blur();
+			let ID_this="#"+$(this).attr('id');
+			let value_this=$(this).val();
+
+			if(ID_this==txtIDs_IPOctets[0] && value_this.length > 1 && parseInt(value_this) > 25 ) { $(txtIDs_IPOctets[1]).val(""); $(txtIDs_IPOctets[1]).focus(); }
+			if(ID_this==txtIDs_IPOctets[1] && value_this.length > 1 && parseInt(value_this) > 25 ) { $(txtIDs_IPOctets[2]).val(""); $(txtIDs_IPOctets[2]).focus(); }
+			if(ID_this==txtIDs_IPOctets[2] && value_this.length > 1 && parseInt(value_this) > 25 ) { $(txtIDs_IPOctets[3]).val(""); $(txtIDs_IPOctets[3]).focus(); }
+			if(ID_this==txtIDs_IPOctets[3] && value_this.length > 1 && parseInt(value_this) > 25 ) { $(txtID_PortNumber).focus(); }
+			if(ID_this==txtID_PortNumber && value_this.length > 1 && parseInt(value_this) > 9000 ) { $(this).blur(); }
 		}
 
 	});
 
 
-	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
-	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
+	$(merge_selectors(txtClass_IpOctets,txtID_PortNumber)).keypress(function(event) 
 	{
 		if(!(event.which >=48 && event.which<=57))
 		{
 			event.preventDefault();
 		}
 	});
-	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
-	
 
 	$("#txt_quantityCoils").keypress(function(event) 
 	{
@@ -106,11 +99,20 @@ $(document).ready(function()
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
-					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
-
-					$("#div_Results_Input_Registers").text(responseData);
-					$("#div_Results_Input_Registers").addClass("alert-success");
-					$("#div_Results_Input_Registers").slideDown();
+					let console_message=`${ip_address}:${port_number} => ${message}, response:${responseData}`
+					print(console_message)
+					if(responseObject["statusCode"]==1500)
+					{
+						$("#div_Results_Input_Registers").text(console_message);
+						$("#div_Results_Input_Registers").addClass("alert-warning");
+						$("#div_Results_Input_Registers").slideDown();
+					}
+					else
+					{
+						$("#div_Results_Input_Registers").text(responseData);
+						$("#div_Results_Input_Registers").addClass("alert-success");
+						$("#div_Results_Input_Registers").slideDown();
+					}
 				} 
 				catch (exception)
 				{
@@ -162,12 +164,20 @@ $(document).ready(function()
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
-					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
-
-
-					$("#div_Results_Contacts").text(responseData);
-					$("#div_Results_Contacts").addClass("alert-success");
-					$("#div_Results_Contacts").slideDown();
+					let console_message=`${ip_address}:${port_number} => ${message}, response:${responseData}`
+					print(console_message)
+					if(responseObject["statusCode"]==1500)
+					{
+						$("#div_Results_Contacts").text(console_message);
+						$("#div_Results_Contacts").addClass("alert-warning");
+						$("#div_Results_Contacts").slideDown();
+					}
+					else
+					{
+						$("#div_Results_Contacts").text(responseData);
+						$("#div_Results_Contacts").addClass("alert-success");
+						$("#div_Results_Contacts").slideDown();
+					}
 				} 
 				catch (exception) 
 				{
@@ -483,18 +493,21 @@ $(document).ready(function()
 		{
 			print(open_client)
 			$("#img_connectionSpinner").show()
-			$(".txt_ipOctet, .txt_portNumber").prop('disabled', true);
+			$(txtClass_IpOctets).prop('disabled', true);
+			$(txtID_PortNumber).prop('disabled', true);
+			
 		
 		}
 		else 
 		{
-			$(".txt_ipOctet, .txt_portNumber").prop('disabled', false);
+			$(txtClass_IpOctets).prop('disabled', false);
+			$(txtID_PortNumber).prop('disabled', false);
 			$(".div_result").hide()
 			$("#div_Operations").fadeOut()
 		}
 
 		let ip_address=$("#txt_IPOctet1").val()+"."+$("#txt_IPOctet2").val()+"."+$("#txt_IPOctet3").val()+"."+$("#txt_IPOctet4").val();
-		let port=parseInt($("#txt_portNumber").val())
+		let port=parseInt($(txtID_PortNumber).val())
 		
 		$.ajax(
 		{
@@ -547,8 +560,7 @@ $(document).ready(function()
 	// Listener $(".txt_ipOctet").focusout END
 
 
-	// Listener $(".txt_portNumber").focusout BEGIN
-	$(".txt_portNumber").focusout(function(event) 
+	$(txtID_PortNumber).focusout(function(event) 
 	{
 		$(this).val(parseInt($(this).val()==""?0:$(this).val()))
 		if(parseInt($(this).val()) > 65535 || parseInt($(this).val()) < 0 )
@@ -556,17 +568,15 @@ $(document).ready(function()
 			$(this).val(502);
 		}
 	});	
-	// Listener $(".txt_portNumber").focusout END
-
 
 	// $(document).on('keypress) BEGIN
 	$(document).on('keypress',function(e) 
 	{
 		if(e.which == 13) 
 		{
-			if(!$("#chkbox_ClientStatus").is(":checked")) 
+			if(!$(chkBxID_clientStatus).is(":checked")) 
 			{ 
-				$('#chkbox_ClientStatus').bootstrapToggle("on")
+				$(chkBxID_clientStatus).bootstrapToggle("on")
 			}
 		}
 });
@@ -581,6 +591,7 @@ $(document).ready(function()
 
 ////////////////////////////////////////////
 // HelperFunctions BEGIN
+
 
 // Function checkClientStatus BEGIN
 function checkClientStatus()
@@ -599,22 +610,22 @@ function checkClientStatus()
 					let message=responseObject["message"]==	"true"?true:false
 					
 
-					if(message && ! $("#chkbox_ClientStatus").is(":checked"))
+					if(message && ! $(chkBxID_clientStatus).is(":checked"))
 					{ 
-						print(`${ip_address}:${port_number} => ${message} (Check:${$("#chkbox_ClientStatus").is(":checked")})`)
-						$('#chkbox_ClientStatus').bootstrapToggle("on")
+						print(`${ip_address}:${port_number} => ${message} (Check:${$(chkBxID_clientStatus).is(":checked")})`)
+						$(chkBxID_clientStatus).bootstrapToggle("on")
 
-						$("#txt_IPOctet1").val(ip_address.split(".")[0]);
-						$("#txt_IPOctet2").val(ip_address.split(".")[1]);
-						$("#txt_IPOctet3").val(ip_address.split(".")[2]);
-						$("#txt_IPOctet4").val(ip_address.split(".")[3]);
-						$("#txt_portNumber").val(port_number);
+						$(txtIDs_IPOctets[0]).val(ip_address.split(".")[0]);
+						$(txtIDs_IPOctets[1]).val(ip_address.split(".")[1]);
+						$(txtIDs_IPOctets[2]).val(ip_address.split(".")[2]);
+						$(txtIDs_IPOctets[3]).val(ip_address.split(".")[3]);
+						$(txtID_PortNumber).val(port_number);
 					}
-					if(! message && $("#chkbox_ClientStatus").is(":checked")) 
+					if(! message && $(chkBxID_clientStatus).is(":checked")) 
 					{
-						$('#chkbox_ClientStatus').bootstrapToggle("on")
-						print(`${ip_address}:${port_number} => ${message} (Check:${$("#chkbox_ClientStatus").is(":checked")})`)
-						$('#chkbox_ClientStatus').bootstrapToggle("off")
+						$(chkBxID_clientStatus).bootstrapToggle("on")
+						print(`${ip_address}:${port_number} => ${message} (Check:${$(chkBxID_clientStatus).is(":checked")})`)
+						$(chkBxID_clientStatus).bootstrapToggle("off")
 					}
 				} 
 				catch (exception) 
@@ -662,11 +673,11 @@ function setDefaultValuesforInputs()
 
 	$("#txt_coilStartAddress").val("0");
 	$("#txt_coilAddress").val("0");
-	$("#txt_IPOctet1").val("127");
-	$("#txt_IPOctet2").val("0");
-	$("#txt_IPOctet3").val("0");
-	$("#txt_IPOctet4").val("1");
-	$("#txt_portNumber").val("502");
+	$(txtIDs_IPOctets[0]).val("127");
+	$(txtIDs_IPOctets[1]).val("0");
+	$(txtIDs_IPOctets[2]).val("0");
+	$(txtIDs_IPOctets[3]).val("1");
+	$(txtID_PortNumber).val("502");
 }
 // Function setDefaultValuesforInputs END
 
@@ -678,6 +689,7 @@ function print(...strings)
 }
 // Function print END
 
+
 // Function replace_all BEGIN
 function replace_all(string, old_phrase, new_phrase)
 {
@@ -686,7 +698,16 @@ function replace_all(string, old_phrase, new_phrase)
 // Function replace_all END
 
 
+// Function merge_selectors BEGIN
+function merge_selectors(...selectors)
+{
+	let merged="";
+	selectors.forEach(function(selector){merged+=selector+", ";});
+
+	return merged.substring(0, merged.length - 2);
+}
+// Function merge_selectors END
 
 
-// HelperFunctions END
+// HelperFunctions END	
 ////////////////////////////////////////////

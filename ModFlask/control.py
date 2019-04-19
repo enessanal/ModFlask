@@ -179,7 +179,7 @@ def readCoilsController(request_data=False):
 
   
   if not modbusRequest: 
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Coils: Fail"}
     responseObject["statusCode"]=1500
     return json.dumps(responseObject)
 
@@ -301,7 +301,7 @@ def readContactsController(request_data=False):
   modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactAddress"],requestObject["quantity"])
   
   if not modbusRequest: 
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Contacts Write: Fail"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Contacts: Fail"}
     responseObject["statusCode"]=1500
     return json.dumps(responseObject)
 
@@ -335,7 +335,7 @@ def readInputRegistersController(request_data=False):
   modbusRequest = modbusClient.read_input_registers(requestObject["registerAddress"],requestObject["quantity"])
  
   if not modbusRequest: 
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Registers Write: Fail"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers Write: Fail"}
     responseObject["statusCode"]=1500
     return json.dumps(responseObject)
 
