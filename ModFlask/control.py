@@ -180,6 +180,7 @@ def readCoilsController(request_data=False):
   
   if not modbusRequest: 
     responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    responseObject["statusCode"]=1500
     return json.dumps(responseObject)
 
 
@@ -267,7 +268,12 @@ def readRegistersController(request_data=False):
     return json.dumps(responseObject)
   
   modbusRequest = modbusClient.read_holding_registers(requestObject["registerAddress"],requestObject["quantity"])
-  print(modbusRequest)
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Fail"}
+    responseObject["statusCode"]=1500
+    return json.dumps(responseObject)
+
+
   responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Holding Registers: Successfull","response":modbusRequest}
 
   return json.dumps(responseObject)
@@ -295,7 +301,8 @@ def readContactsController(request_data=False):
   modbusRequest = modbusClient.read_discrete_inputs(requestObject["contactAddress"],requestObject["quantity"])
   
   if not modbusRequest: 
-    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Coils Write: Fail"}
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Multiple Contacts Write: Fail"}
+    responseObject["statusCode"]=1500
     return json.dumps(responseObject)
 
   for i in range(0,len(modbusRequest)):
@@ -326,7 +333,13 @@ def readInputRegistersController(request_data=False):
     return json.dumps(responseObject)
   
   modbusRequest = modbusClient.read_input_registers(requestObject["registerAddress"],requestObject["quantity"])
-  print(modbusRequest)
+ 
+  if not modbusRequest: 
+    responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Registers Write: Fail"}
+    responseObject["statusCode"]=1500
+    return json.dumps(responseObject)
+
+
   responseObject={"host":modbusClient.host(),"port":modbusClient.port(),"message":"Read Input Registers: Successfull","response":modbusRequest}
 
   return json.dumps(responseObject)

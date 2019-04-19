@@ -4,31 +4,29 @@
 // $(document).ready BEGIN
 $(document).ready(function()
 {
-	$(document).on('keypress',function(e) 
-	{
-		if(e.which == 13) 
-		{
-			if(!$("#chkbox_ClientStatus").is(":checked")) 
-			{ 
-				$('#chkbox_ClientStatus').bootstrapToggle("on")
-			}
-		}
-});
-
 	setDefaultValuesforInputs();
 	checkClientStatus();
 	var intervalID = setInterval(function(){ checkClientStatus()}, 3000);
 
 
 
-	// $(".input-strict-digit").keypress(function(event)
+	// $(".input-strict-0_9").keypress(function(event)
 	// {
-		
 	// 	if(!(event.which >=48 && event.which<=57))
 	// 	{
 	// 		event.preventDefault();
 	// 	}
 	// });
+
+	
+	// $(".input-strict-0_1").keypress(function(event)
+	// {
+	// 	if(event.which != 48 && event.which != 49)
+	// 	{
+	// 		event.preventDefault();
+	// 	}
+	// });
+
 
 
 	
@@ -45,6 +43,7 @@ $(document).ready(function()
 
 	});
 
+
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress BEGIN
 	$(".txt_ipOctet, .txt_portNumber").keypress(function(event) 
 	{
@@ -55,6 +54,7 @@ $(document).ready(function()
 	});
 	// Listener $(".txt_ipOctet, .txt_portNumber").keypress END
 	
+
 	$("#txt_quantityCoils").keypress(function(event) 
 	{
 		if(!(event.which >=48 && event.which<=57))
@@ -62,6 +62,7 @@ $(document).ready(function()
 			event.preventDefault();
 		}
 	});		
+
 
 	$("#txt_coilsArray").keypress(function(event) 
 	{
@@ -71,6 +72,7 @@ $(document).ready(function()
 		}
 	});	
 
+
 	$("#txt_coilStartAddress, #txt_readCoilStartAddress, #txt_coilAddress, #txt_registerAddress, #txt_registerValue").keypress(function(event) 
 	{
 		if(!(event.which >=48 && event.which<=57))
@@ -78,8 +80,6 @@ $(document).ready(function()
 			event.preventDefault();
 		}
 	});	
-
-///////////////////////////////////////////////////////////////////////////////////////////
 
 
 	$("#btn_receiveInputRegisters").click(function(event)
@@ -136,6 +136,7 @@ $(document).ready(function()
 		});
 	});
 
+
 	$("#btn_receiveContacts").click(function(event)
 	{
 		$("#div_Results_Contacts").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
@@ -191,6 +192,7 @@ $(document).ready(function()
 		});
 	});
 
+
 	$("#btn_receiveRegisters").click(function(event)
 	{		
 		$("#div_Results_Registers").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
@@ -199,7 +201,6 @@ $(document).ready(function()
 
 		let registerAddress=parseInt($("#txt_readRegisterStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityRegisters").val())
-
 		$.ajax(
 		{
 			url:"/api/readRegisters",
@@ -215,11 +216,20 @@ $(document).ready(function()
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
-					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
-
-					$("#div_Results_Registers").text(responseData);
-					$("#div_Results_Registers").addClass("alert-success");
-					$("#div_Results_Registers").slideDown();
+					let console_message=`${ip_address}:${port_number} => ${message}, response:${responseData}`
+					print(console_message)
+					if(responseObject["statusCode"]==1500)
+					{
+						$("#div_Results_Registers").text(console_message);
+						$("#div_Results_Registers").addClass("alert-warning");
+						$("#div_Results_Registers").slideDown();
+					}
+					else
+					{
+						$("#div_Results_Registers").text(responseData);
+						$("#div_Results_Registers").addClass("alert-success");
+						$("#div_Results_Registers").slideDown();
+					}
 				} 
 				catch (exception) 
 				{					
@@ -243,6 +253,7 @@ $(document).ready(function()
 			},
 		});
 	});
+
 
 	$("#btn_sendRegisters").click(function(event)
 	{
@@ -284,6 +295,7 @@ $(document).ready(function()
 		});
 	});
 
+
 	$("#btn_sendRegister").click(function(event)
 	{
 		let registerAddress =	parseInt($("#txt_registerAddress").val());
@@ -317,6 +329,7 @@ $(document).ready(function()
 				}
 		});
 	});
+
 
 	$("#btn_sendCoils").click(function(event)
 	{
@@ -354,6 +367,7 @@ $(document).ready(function()
 		});
 	});
 
+
 	$(".btn_singleCoil").click(function(event)
 	{
 		let coilAddress=parseInt($("#txt_coilAddress").val())
@@ -389,12 +403,12 @@ $(document).ready(function()
 			});
 	});
 	
+
 	$("#btn_receiveCoils").click(function(event)
 	{
 		$("#div_Results_Coils").removeClass("alert-primary alert-secondary alert-success alert-danger alert-warning alert-info alert-light alert-dark");
 		$("#div_Results_Coils").slideUp();
 		$("#div_Results_Coils").text("");
-
 
 		let coilAddress=parseInt($("#txt_readCoilStartAddress").val())
 		let quantity=parseInt($("#txt_readQuantityCoils").val())
@@ -414,14 +428,22 @@ $(document).ready(function()
 					let port_number=responseObject["port"]
 					let message=responseObject["message"]
 					let responseData=responseObject["response"]
-					print(`${ip_address}:${port_number} => ${message}, response:${responseData}`)
-
-					$("#div_Results_Coils").text(responseData);
-					$("#div_Results_Coils").addClass("alert-success");
-					$("#div_Results_Coils").slideDown();
-
+					let console_message=`${ip_address}:${port_number} => ${message}, response:${responseData}`
+					print(console_message)
+					if(responseObject["statusCode"]==1500)
+					{
+						$("#div_Results_Coils").text(console_message);
+						$("#div_Results_Coils").addClass("alert-warning");
+						$("#div_Results_Coils").slideDown();
+					}
+					else
+					{
+						$("#div_Results_Coils").text(responseData);
+						$("#div_Results_Coils").addClass("alert-success");
+						$("#div_Results_Coils").slideDown();
+					}
 				} 
-				catch (exception) 
+				catch(exception) 
 				{
 					let r1=`Can't parse JSON. Original response => ${response}`;
 					let r2=`Error Message => +${exception.message}`;
@@ -444,19 +466,19 @@ $(document).ready(function()
 		});
 	});
 	
+
 	$("#txt_quantityCoils").focusout(function(event) 
 	{
 		$("#txt_coilsArray").attr("maxlength",$(this).val());
 		$("#txt_coilsArray").val("0".repeat($(this).val()))
 	});	
 
+
 	// Listener $("#chkbox_ClientStatus").change BEGIN
 	$("#chkbox_ClientStatus").change(function(event)
 	{
 		let open_client=$(this).is(":checked")
 		
-		
-
 		if (open_client) 
 		{
 			print(open_client)
@@ -512,6 +534,7 @@ $(document).ready(function()
 	});
 	// Listener $("#chkbox_ClientStatus").change END
 
+
 	// Listener $(".txt_ipOctet").focusout BEGIN
 	$(".txt_ipOctet").focusout(function(event) 
 	{
@@ -523,6 +546,7 @@ $(document).ready(function()
 	});
 	// Listener $(".txt_ipOctet").focusout END
 
+
 	// Listener $(".txt_portNumber").focusout BEGIN
 	$(".txt_portNumber").focusout(function(event) 
 	{
@@ -533,6 +557,21 @@ $(document).ready(function()
 		}
 	});	
 	// Listener $(".txt_portNumber").focusout END
+
+
+	// $(document).on('keypress) BEGIN
+	$(document).on('keypress',function(e) 
+	{
+		if(e.which == 13) 
+		{
+			if(!$("#chkbox_ClientStatus").is(":checked")) 
+			{ 
+				$('#chkbox_ClientStatus').bootstrapToggle("on")
+			}
+		}
+});
+	// $(document).on('keypress) END
+
 
 });
 // $(document).ready END
