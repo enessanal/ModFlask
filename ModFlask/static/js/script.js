@@ -581,6 +581,39 @@ $(document).ready(function()
 	// $(document).on('keypress) END
 
 
+	jQuery("#txt_IPOctet1").on('paste', function(e)
+	{
+		$("#txt_IPOctet1").attr("maxlength",40);
+		setTimeout(function() 
+		{
+			let textValue=$("#txt_IPOctet1").val();
+
+			if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(textValue))
+			{
+				
+				let octets = textValue.split(".");
+				$("#txt_IPOctet1").val(octets[0]);
+				$("#txt_IPOctet2").val(octets[1]);
+				$("#txt_IPOctet3").val(octets[2]);
+				$("#txt_IPOctet4").val(octets[3]);
+				$("#txt_IPOctet1").attr("maxlength",3);
+			}
+			else
+			{
+				$("#txt_IPOctet1").val(127);
+				$("#txt_IPOctet1").attr("maxlength",3);
+			}
+			$("#txt_IPOctet1").attr("maxlength",3);
+		},10);
+});
+
+
+
+
+
+
+
+
 });
 // $(document).ready END
 ////////////////////////////////////////////

@@ -5,9 +5,8 @@ from helpers import *
 
 # homeController BEGIN
 def homeController():
-  # return app.send_static_file("index.html")
   title="ModFlask - Flask Web Client for Modbus"
-  header="Biznet Modbus Web Client"
+  header="Modbus Web Client"
   parameters={"title":title,"header":header}
 
   return render_template("index.html",parameters=parameters)
@@ -16,7 +15,6 @@ def homeController():
 
 # clientStatusController BEGIN
 def clientStatusController(request_data=False):
-  # time.sleep(1)
   global MODBUS_SERVER
   global MODBUS_SERVER_PORT
   global UNIT_IDENTIFIER
@@ -430,9 +428,5 @@ def readInputRegistersRoute():
   return readInputRegistersController(request.data)
 # readInputRegistersRoute END
 
-
-
 #############################################################
 # Route Operations END
-
-
