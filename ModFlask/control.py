@@ -25,7 +25,8 @@ def clientStatusController(request_data=False):
     return json.dumps(checkClientStatus(modbusClient))
 
   open_client=False
-
+  print(request_data)
+  logging.debug(request_data)
   try:
     open_client = json.loads(request_data)["open_client"]
   except Exception as exception:
