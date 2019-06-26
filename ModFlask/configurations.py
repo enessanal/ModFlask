@@ -60,7 +60,7 @@ except Exception as exception:
   exit()
 
 
-LOG_FILE_NAME="ModbusServer.log"
+LOG_FILE_NAME="ModbusFlask.log"
 LOG_FILE_MODE="a"
 
 LOG_LEVEL=logging.DEBUG
