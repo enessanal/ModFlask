@@ -57,10 +57,10 @@ log.addHandler(fileHandler)
 
 def run_server():
     store = ModbusSlaveContext(
-        di=ModbusSequentialDataBlock(0, [17]*100),
-        co=ModbusSequentialDataBlock(0, [17]*100),
-        hr=ModbusSequentialDataBlock(0, [19]*100),
-        ir=ModbusSequentialDataBlock(0, [15]*100))
+        di=ModbusSequentialDataBlock(0, [0]*10000),
+        co=ModbusSequentialDataBlock(0, [0]*10000),
+        hr=ModbusSequentialDataBlock(0, [0]*10000),
+        ir=ModbusSequentialDataBlock(0, [0]*10000))
 
     context = ModbusServerContext(slaves=store, single=True)
     identity = ModbusDeviceIdentification()
