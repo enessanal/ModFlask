@@ -13,4 +13,4 @@ in "Modbus TCP Server" Folder:
 in "ModFlask" Folder:
 > python3 main.py
 #### or
-> python3 main.py --host 0.0.0.0 --port 502 
+> python3 main.py --host 0.0.0.0 --port 8001 
