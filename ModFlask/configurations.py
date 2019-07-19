@@ -1,5 +1,4 @@
 import sys
-import importlib
 import logging
 
 if sys.version_info.major is not 3:
@@ -13,12 +12,21 @@ moduleNames.append("flask")
 moduleNames.append("pymodbus")
 moduleNames.append("pyModbusTCP")
 
-for moduleName in moduleNames:
- if(importlib.util.find_spec(moduleName) is None):
-  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
-  print('pip3 install {}'.format(moduleName))
-  exit()
+try:
+	import importlib
+	for moduleName in moduleNames:
+	 if(importlib.util.find_spec(moduleName) is None):
+	  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+	  print('pip3 install {}'.format(moduleName))
+	  exit()
 
+except Exception as exception:
+	from importlib import util
+	for moduleName in moduleNames:
+	 if(util.find_spec(moduleName) is None):
+	  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+	  print('pip3 install {}'.format(moduleName))
+	  exit()	
 
 import os 
 import time
