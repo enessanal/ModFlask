@@ -10,12 +10,27 @@ moduleNames.append("pymodbus")
 moduleNames.append("logging")
 moduleNames.append("argparse")
 
-for moduleName in moduleNames:
- if(importlib.util.find_spec(moduleName) is None):
-  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
-  print('pip3 install {}'.format(moduleName))
-  exit()
+#for moduleName in moduleNames:
+# if(importlib.util.find_spec(moduleName) is None):
+#  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+#  print('pip3 install {}'.format(moduleName))
+#  exit()
 
+try:
+	import importlib
+	for moduleName in moduleNames:
+	 if(importlib.util.find_spec(moduleName) is None):
+	  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+	  print('pip3 install {}'.format(moduleName))
+	  exit()
+
+except Exception as exception:
+	from importlib import util
+	for moduleName in moduleNames:
+	 if(util.find_spec(moduleName) is None):
+	  print('\nPlease install the "{}" module first.'.format(moduleName),end=" => ")
+	  print('pip3 install {}'.format(moduleName))
+	  exit()	
 
 
 from pymodbus.server.sync import StartTcpServer
@@ -70,7 +85,20 @@ def run_server():
     identity.ProductName = 'Pymodbus Server'
     identity.ModelName = 'Pymodbus Server'
     identity.MajorMinorRevision = '1.5'
+    #-----------------------------------------------------
+    print("debug started\n\n")
+
     
+    print(dir(store))
+    store.setValues(3,53,[30000])
+
+
+
+
+
+
+    print("\n\ndebug finished")
+    #-----------------------------------------------------
     print("Listening on {}:{}".format(HOST,PORT))
     StartTcpServer(context, identity=identity, address=(HOST, PORT))
 
