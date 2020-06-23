@@ -1,5 +1,5 @@
 import sys
-import logging
+# import logging
 
 if sys.version_info.major is not 3:
  print("! Only Python3 !")
@@ -67,18 +67,19 @@ except Exception as exception:
   print(str(exception))
   exit()
 
+# LOGGING CANCELED #
+# LOG_FILE_NAME="ModbusFlask.log"
+# LOG_FILE_MODE="a"
 
-LOG_FILE_NAME="ModbusFlask.log"
-LOG_FILE_MODE="a"
-
-LOG_LEVEL=logging.DEBUG
-LOG_FORMAT = ('%(asctime)-15s' ' %(levelname)-8s %(message)s')
-LOG_FORMATTER=logging.Formatter(LOG_FORMAT)
-fileHandler = logging.FileHandler(LOG_FILE_NAME,LOG_FILE_MODE)
-fileHandler.setFormatter(LOG_FORMATTER)
-log = logging.getLogger()
-log.setLevel(LOG_LEVEL)
-log.addHandler(fileHandler)
+# LOG_LEVEL=logging.DEBUG
+# LOG_FORMAT = ('%(asctime)-15s' ' %(levelname)-8s %(message)s')
+# LOG_FORMATTER=logging.Formatter(LOG_FORMAT)
+# fileHandler = logging.FileHandler(LOG_FILE_NAME,LOG_FILE_MODE)
+# fileHandler.setFormatter(LOG_FORMATTER)
+# log = logging.getLogger()
+# log.setLevel(LOG_LEVEL)
+# log.addHandler(fileHandler)
+# LOGGING CANCELED #
 
 #############################################################
 # Configurations END
