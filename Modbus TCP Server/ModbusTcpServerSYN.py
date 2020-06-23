@@ -86,10 +86,10 @@ def run_server():
     identity.ModelName = 'Pymodbus Server'
     identity.MajorMinorRevision = '1.5'
     #-----------------------------------------------------
-    print("debug started\n\n")
+    # print("debug started\n\n")
 
     
-    print(dir(store))
+    # print(dir(store))
     store.setValues(3,53,[30000])
 
 
@@ -97,7 +97,7 @@ def run_server():
 
 
 
-    print("\n\ndebug finished")
+    # print("\n\ndebug finished")
     #-----------------------------------------------------
     print("Listening on {}:{}".format(HOST,PORT))
     StartTcpServer(context, identity=identity, address=(HOST, PORT))
