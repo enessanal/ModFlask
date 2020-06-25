@@ -4,6 +4,7 @@ Flask Web Client for Modbus
 
 ## Install
 > git clone https://github.com/enessanal/ModFlask.git
+> pip3 install -r requirements.list
 
 ## Modbus TCP Server Start
 in "Modbus TCP Server" Folder:
